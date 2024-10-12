@@ -10,6 +10,7 @@ import { Image } from 'astro:assets'
 import astro from '../assets/thariq3.png'
 
 import { getAllPosts, sortMDByDate } from '@/utils'
+import Tag from '@/components/Tag.astro'
 
 const MAX_POSTS = 10
 const allPosts = await getAllPosts()
@@ -76,10 +77,11 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 				made a non-profit, and did gradschool at the MIT Media Lab.
 			</p>
 			<p>
-				I'm most excited about building novel AI UX paradigms that comes from understanding the
-				underlying research. I'm currently diving into AI alignment and steering.
+				I'm most excited about building novel AI UX informed by state of the art ML research. I'm
+				sharing what I learn on my blog, mostly recently I've been diving into AI reasoning.
 			</p>
 		</Section>
+
 		{
 			allPostsByDate.length > 0 && (
 				<Section title='Posts'>
@@ -95,14 +97,31 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 		}
 
 		<Section title="Stuff I've Made">
-			<div class='grid grid-cols-2 gap-4'>
+			<div class='grid grid-cols-3 gap-4'>
 				<ProjectCard
 					href='https://x.com/trq212/status/1833274377640829070'
 					heading='Zaphod'
 					subheading="I'm working on a (soon to be) open source AI coding agent."
-					imagePath='/src/assets/pubpub.jpeg'
+					imagePath='/src/assets/zaphod.png'
 					altText='Example'
 					class='w-full'
+				/>
+				<ProjectCard
+					href='https://x.com/trq212/status/1833274377640829070'
+					heading='Sherpa'
+					subheading="A company I'm working on with a friend."
+					imagePath='/src/assets/sheep.jpeg'
+					altText='Example'
+					class='w-full'
+				/>
+				<ProjectCard
+					href='https://x.com/trq212/status/1833274377640829070'
+					heading='AI World Building'
+					subheading="A company I'm working on with a friend."
+					imagePath='/src/assets/worldbuilding2.png'
+					altText='Example'
+					class='w-full'
+					tags={['Experiment']}
 				/>
 				<ProjectCard
 					heading='One More Multiverse'
