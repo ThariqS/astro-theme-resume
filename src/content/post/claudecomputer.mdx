@@ -1,0 +1,96 @@
+---
+title: 'Claude Computer Use — Is Vision the Ultimate API?'
+description: 'A deep dive into Anthropic’s new Computer Use API.'
+publishDate: '24 Oct 2024'
+tags: ['ML', 'Reasoning']
+---
+
+import ExpandableBlock from '../../components/ExpandableBlock.jsx'
+
+I’ve spent the last 2 days basically non-stop hacking with [Anthropic’s Computer Use API](https://www.anthropic.com/research/developing-computer-use).
+
+It’s slow, unreliable, prone to taking over your computer and… incredibly exciting.
+
+Claude Computer is the first time I've felt a true ‘agent’ experience, because in the end Vision is the API that ties everything together— _it can always do something_.
+
+Overall, my learnings have been that the goal should be to get Claude to use as little vision as possible, but the fact that it can use vision allows it to catch much more edge cases than any other agent.
+
+<ExpandableBlock heading='Test Claude Computer Use Yourself' client:load />
+
+## **How does it work?**
+
+Claude Computer Use seems to be essentially Claude3.5 fine-tuned on computer interaction data. It can understand screenshots of computers and what is on them much better than other models.
+
+## **What is it good at?**
+
+#### **Screen Reading & Navigation (relatively)**
+
+I’ve almost never seen Claude misread the contents of a screenshot.
+
+Compared to other AIs it’s quite good at knowing coordinates like `click on the the input bar at (500,250), though depending your screen size, it will often barely miss it.
+
+#### **Function Calls**
+
+I’m used to thinking of Function Calls as strictly worse than structured output, but Claude Computer uses function calls well. For example, given a browser tool that has a function to immediately navigate to a website, it will prefer to use that vs clicking on your browser icon.
+
+#### **Thinking Step-by-Step**
+
+When asked to break down a task, Claude is usually quite good at identifying the steps it needs to take and starting on them.
+
+## What is it bad at?
+
+#### **Knowing when to Read the Screen**
+
+Since taking a screenshot is expensive, so the AI will tend to assume that its manipulations have worked.
+
+E.g. if it types into a field, but doesn’t have focus, it is extremely hard for it to detect that until later. The OS function calls need to be very accurate in describing if the intended result actually happened.
+
+This is the most common way I've seen Claude get stuck. By the time it takes a new screenshot, it doesn't know where in its progression it is.
+
+#### **Fetching More Data**
+
+If I want it to find the 3 closest Shawarma places, Claude will put ‘Shawarma’ into Google Maps and then select the top 3 results.
+
+It will almost never ‘sort by distance’ in the menu first, if it needs to click on things.
+
+It's possible that this might be fixed with better prompting structure.
+
+#### **Remembering State**
+
+With Computer Use, more of the state of the program state is stored in images, which it seems worse at recalling. This extends to what it has done in the past, e.g. previous tabs it's opened or applications it's made changes in.
+
+You should try and get Claude to output relevant state as text as much as possible and provide system state as a tool.
+
+#### **Navigating Modals and Popups**
+
+Claude is most often confused by modals and popups, not knowing how to click out of them or recoginizing that they're not a correct state to be in.
+
+## What does it need?
+
+#### **As much System State as you can give it**
+
+Ideally, you want Claude Computer to only use vision when it absolutely needs to. Giving it tools to understand the state easily without using vision helps it move faster and think clearer.
+
+It is very helpful to give it things like:
+
+- A list of applications that are open
+- Which application has active focus
+- What is focused inside the application
+- Function calls to specifically navigate those applications, as many as possible
+  - a browser tool in particular is important, for example to navigate to a specific URL or search for something
+
+#### **A way to handle Uncertainty**
+
+This the biggest open question in Agent development.
+
+The most important thing about Agents is Trust, and trust requires input and back and forth. There were many times in testing when it was clear Claude didn’t know what to do, and it powered through instead of stopping or asking.
+
+I spent quite a long time trying to make a Questions tool to get the AI to ask questions or reason if it was stuck. But it almost never used it.
+
+This makes sense, a function call is best when you know that you need information, and you just need to retrieve it.
+
+But knowing when you’re uncertain is a different problem. Agent developers need to be able to trust that the AI will report its own uncertainty.
+
+## Looking Forward
+
+Claude Computer is the first step towards true agent behavior. We're likely not yet maxing the capabilities of this current model. But it's also clear that we'll need more than LLM function calls to create a true agent experience.

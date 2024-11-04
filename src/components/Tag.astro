@@ -1,14 +1,17 @@
 ---
 import { cn } from '@/utils'
 
-const { class: className, text } = Astro.props
+const { class: className, text, color } = Astro.props
 ---
 
 <span
 	class={cn(
 		className,
-		'flex flex-col gap-y-3 rounded-2xl border border-border bg-primary-foreground '
+		'flex flex-col gap-y-3 px-2 rounded-md text-xs text-white bg-primary-foreground '
 	)}
+	style={{
+		backgroundColor: color
+	}}
 >
 	{text}
 </span>

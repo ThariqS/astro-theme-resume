@@ -4,7 +4,7 @@ import type { CollectionEntry } from 'astro:content'
 
 import FormattedDate from '../FormattedDate.astro'
 
-type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
+type Props<Tag extends HTMLTag> = {
 	post: CollectionEntry<'post'>
 	withDesc?: boolean
 }

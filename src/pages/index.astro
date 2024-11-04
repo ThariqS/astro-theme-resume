@@ -15,6 +15,7 @@ import Tag from '@/components/Tag.astro'
 const MAX_POSTS = 10
 const allPosts = await getAllPosts()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+console.log(allPostsByDate.map((p) => p.data.tags))
 ---
 
 <PageLayout meta={{ title: 'Home' }}>
@@ -73,8 +74,18 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 				and help others, while looking for my next thing.
 			</p>
 			<p>
-				In past lives I've founded a YC backed gaming company & raised $17MM, sold a SAAS startup,
-				made a non-profit, and did gradschool at the MIT Media Lab.
+				In past lives I've founded <a
+					class='underline hover:bg-gray-200/75 hover:text-gray-800'
+					'
+					href='https://www.playmultiverse.com'>a YC backed gaming company that raised $17MM</a
+				>, <a
+					class='underline hover:bg-gray-200/75 hover:text-gray-800'
+					href='https://techcrunch.com/2013/03/28/hubspot-acquires-chime-prepwork/'
+					>sold a SAAS startup</a
+				>, <a
+					class='underline hover:bg-gray-200/75 hover:text-gray-800'
+					href='https://www.pubpub.org/'>made a non-profit</a
+				>, and did gradschool at the MIT Media Lab.
 			</p>
 			<p>
 				I'm most excited about building novel AI UX informed by state of the art ML research. I'm
@@ -86,11 +97,13 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 			allPostsByDate.length > 0 && (
 				<Section title='Posts'>
 					<ul class='flex flex-col gap-y-2'>
-						{allPostsByDate.map((p) => (
-							<li class='flex flex-col gap-x-2 sm:flex-row'>
-								<PostPreview post={p} />
-							</li>
-						))}
+						{allPostsByDate
+							.filter((p) => !p.data.tags.includes('hidden'))
+							.map((p) => (
+								<li class='flex flex-col gap-x-2 sm:flex-row'>
+									<PostPreview post={p} />
+								</li>
+							))}
 					</ul>
 				</Section>
 			)
@@ -98,6 +111,8 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
 		<Section title="Stuff I've Made">
 			<div class='grid grid-cols-3 gap-4'>
+				{
+					/* 
 				<ProjectCard
 					href='https://x.com/trq212/status/1833274377640829070'
 					heading='Zaphod'
@@ -106,23 +121,9 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 					altText='Example'
 					class='w-full'
 				/>
-				<ProjectCard
-					href='https://x.com/trq212/status/1833274377640829070'
-					heading='Sherpa'
-					subheading="A company I'm working on with a friend."
-					imagePath='/src/assets/sheep.jpeg'
-					altText='Example'
-					class='w-full'
-				/>
-				<ProjectCard
-					href='https://x.com/trq212/status/1833274377640829070'
-					heading='AI World Building'
-					subheading="A company I'm working on with a friend."
-					imagePath='/src/assets/worldbuilding2.png'
-					altText='Example'
-					class='w-full'
-					tags={['Experiment']}
-				/>
+				*/
+				}
+
 				<ProjectCard
 					heading='One More Multiverse'
 					href='https://www.playmultiverse.com'
@@ -134,12 +135,46 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 					class='w-full'
 				/>
 				<ProjectCard
+					href='/blog/sherpa'
+					heading='Sherpa'
+					subheading='An email agent that prioritizes your emails based on your contacts and goals.'
+					imagePath='/src/assets/sheep.jpeg'
+					altText='Example'
+					class='w-full'
+					tags={[
+						{
+							text: 'Prototype',
+							color: '#ef4444'
+						}
+					]}
+				/>
+				<ProjectCard
+					href='/blog/worldbuilding'
+					heading='AI World Building'
+					subheading='An experiment in AI-aided world building for roleplaying games.'
+					imagePath='/src/assets/worldbuilding2.png'
+					altText='Example'
+					class='w-full'
+					tags={[
+						{
+							text: 'Prototype',
+							color: '#ef4444'
+						}
+					]}
+				/>
+				<ProjectCard
 					heading='Edgeout.gg'
 					href='https://blitz.gg'
 					subheading=`A bootstrapped gaming analytics platform I made. Sold to blitz.gg`
 					imagePath='/src/assets/edgeout.png'
 					altText=''
 					class='w-full'
+					tags={[
+						{
+							text: 'Acquisition',
+							color: '#22c55e'
+						}
+					]}
 				/>
 				<ProjectCard
 					heading='Pubpub.org'
@@ -148,6 +183,20 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 					imagePath='/src/assets/pubpub.jpeg'
 					altText=''
 					class='w-full'
+				/>
+				<ProjectCard
+					heading='Chime'
+					href='https://techcrunch.com/2013/03/28/hubspot-acquires-chime-prepwork/'
+					subheading='A startup that I co-founded in undergrad and was acquired by Hubspot.'
+					imagePath='/src/assets/chime.png'
+					altText=''
+					class='w-full'
+					tags={[
+						{
+							text: 'Acquisition',
+							color: '#22c55e'
+						}
+					]}
 				/>
 			</div>
 		</Section>

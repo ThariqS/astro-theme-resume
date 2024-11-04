@@ -11,38 +11,34 @@ import icon from 'astro-icon'
 
 import vercel from '@astrojs/vercel/serverless'
 
+import react from '@astrojs/react';
+
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.me',
-	integrations: [
-		expressiveCode(expressiveCodeOptions),
-		tailwind({
-			applyBaseStyles: false
-		}),
-		sitemap(),
-		mdx(),
-		icon()
-	],
-	markdown: {
-		remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
-		rehypePlugins: [
-			[
-				rehypeExternalLinks,
-				{
-					target: '_blank',
-					rel: ['nofollow, noopener, noreferrer']
-				}
-			]
-		],
-		remarkRehype: {
-			footnoteLabelProperties: {
-				className: ['']
-			}
-		}
-	},
-	prefetch: true,
-	output: 'server',
-	adapter: vercel({
-		webAnalytics: { enabled: true }
-	})
+    site: 'https://example.me',
+    integrations: [expressiveCode(expressiveCodeOptions), tailwind({
+        applyBaseStyles: false
+		}), sitemap(), mdx(), icon(), react()],
+    markdown: {
+        remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
+        rehypePlugins: [
+            [
+                rehypeExternalLinks,
+                {
+                    target: '_blank',
+                    rel: ['nofollow, noopener, noreferrer']
+                }
+            ]
+        ],
+        remarkRehype: {
+            footnoteLabelProperties: {
+                className: ['']
+            }
+        }
+    },
+    prefetch: true,
+    output: 'server',
+    adapter: vercel({
+        webAnalytics: { enabled: true }
+    })
 })

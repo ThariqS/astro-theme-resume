@@ -31,7 +31,7 @@ if (!images[imagePath])
 			tags && (
 				<div class='flex flex-row gap-x-2'>
 					{tags.map((t: any) => (
-						<Tag text={t} />
+						<Tag text={t.text} color={t.color} />
 					))}
 				</div>
 			)
