@@ -3,8 +3,9 @@ import { Image } from 'astro:assets'
 import type { ImageMetadata } from 'astro'
 import { cn } from '@/utils'
 import Tag from './Tag.astro'
+import HackerNewsScore from './HackerNewsScore'
 
-const { class: className, href, heading, subheading, imagePath, altText, tags } = Astro.props
+const { class: className, href, heading, subheading, imagePath, altText, tags, hackerNewsId } = Astro.props
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/*.{jpeg,jpg,png,gif}')
 if (!images[imagePath])
 	throw new Error(`"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`)
@@ -21,7 +22,7 @@ if (!images[imagePath])
 	<Image
 		src={images[imagePath]()}
 		alt={altText}
-		class='h-48 w-full rounded-2xl rounded-bl-none rounded-br-none object-cover'
+		class='h-48 w-full rounded-bl-none rounded-br-none object-cover'
 		loading='eager'
 	/>
 	<div class='flex flex-col gap-y-0.5 px-5 py-4'>
@@ -36,6 +37,7 @@ if (!images[imagePath])
 				</div>
 			)
 		}
+		{hackerNewsId && <HackerNewsScore className='mt-2' id={hackerNewsId} client:load />}
 	</div>
 
 	<slot />

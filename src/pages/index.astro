@@ -15,7 +15,6 @@ import Tag from '@/components/Tag.astro'
 const MAX_POSTS = 10
 const allPosts = await getAllPosts()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
-console.log(allPostsByDate.map((p) => p.data.tags))
 ---
 
 <PageLayout meta={{ title: 'Home' }}>
@@ -197,6 +196,7 @@ console.log(allPostsByDate.map((p) => p.data.tags))
 							color: '#22c55e'
 						}
 					]}
+					hackerNewsId='5176630'
 				/>
 			</div>
 		</Section>

@@ -3,6 +3,7 @@ title: 'How Modding Games Changed My Life'
 description: 'A description of the impact of modding games on my life.'
 publishDate: '15 Oct 2018'
 tags: ['old']
+hackerNewsId: '18220612'
 ---
 
 “Wait, that’s *my game.*”

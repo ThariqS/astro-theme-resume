@@ -13,27 +13,36 @@ import vercel from '@astrojs/vercel/serverless'
 
 import react from '@astrojs/react';
 
+import { rehypeHeadingIds } from '@astrojs/markdown-remark';
+
 // https://astro.build/config
 export default defineConfig({
     site: 'https://example.me',
-    integrations: [expressiveCode(expressiveCodeOptions), tailwind({
-        applyBaseStyles: false
-		}), sitemap(), mdx(), icon(), react()],
+    integrations: [
+        mdx({
+            components: {
+                a: './src/components/Link.astro'
+            }
+        }),
+        tailwind({
+            applyBaseStyles: false
+        }),
+        sitemap(),
+        icon(),
+        react()
+    ],
     markdown: {
         remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
         rehypePlugins: [
-            [
-                rehypeExternalLinks,
-                {
-                    target: '_blank',
-                    rel: ['nofollow, noopener, noreferrer']
-                }
-            ]
+            rehypeHeadingIds,
         ],
         remarkRehype: {
             footnoteLabelProperties: {
                 className: ['']
             }
+        },
+        components: {
+            a: './src/components/Link.astro'
         }
     },
     prefetch: true,

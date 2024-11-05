@@ -6,6 +6,8 @@ import Button from '@/components/Button.astro'
 
 import PageLayout from './BaseLayout.astro'
 import Label from '@/components/Label.astro'
+import TableOfContents from '@/components/TableOfContents.astro'
+import '@fontsource/newsreader';
 
 interface Props {
 	post: CollectionEntry<'post'>
@@ -22,19 +24,28 @@ const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString()
 const { headings } = await post.render()
 ---
 
+<style is:global>
+	h2, h3, h4 {
+		font-family: 'CabinetGrotesk', sans;
+		font-weight: 800;
+	}
+</style>
+
+
 <PageLayout meta={{ articleDate, description, ogImage: socialImage, title }}>
 	<div
 		style={{
 			width: 'min(80ch,80vw)'
 		}}
 	>
+		<TableOfContents headings={headings} />
 		<div class='mt-2 gap-x-10 lg:flex lg:items-start'>
 			<article class='flex-grow break-words' data-pagefind-body>
 				<div id='blog-hero'><BlogHero content={post} /></div>
 				<div
 					class='text-black-foreground prose prose-base prose-zinc mt-6 dark:prose-invert prose-headings:font-medium prose-headings:text-foreground prose-headings:before:absolute prose-headings:before:-ms-4 prose-th:before:content-none'
 					style={{
-						fontSize: '1.25rem'
+						fontSize: '1.25rem',
 					}}
 				>
 					<slot />

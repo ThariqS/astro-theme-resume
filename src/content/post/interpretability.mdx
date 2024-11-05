@@ -1,0 +1,132 @@
+---
+title: 'Should Developers Care about Interpretability?'
+description: 'A breakdown of how interpretability & steering work, and why it matters.'
+publishDate: '4 Nov 2024'
+tags: ['interpretability']
+---
+
+One of the biggest advancements in LLMs this year has been in the field of interpretability- the ability to understand what a LLM is “thinking” and to steer its generation process.
+
+The most famous example of this is probably Anthropic’s [Golden Gate Claude](https://www.anthropic.com/news/golden-gate-claude), which is a model that can be steered to generate text in a particular style. This work isn’t limited to text, it's also happening with [images](https://featurelab.xyz/), [voice](https://x.com/GopalKRaman/status/1832200457621557594/video/1) and even [protein models](https://www.nature.com/articles/s41587-024-0206-x).
+
+But in contrast to the excitement amongst researchers, AI developers seem less enthused or even confused. 
+
+*“Why can’t we just prompt that?”* is a question I've heard often. 
+
+In this post I dive into how we might use interpretability & steering features in our applications.
+
+## How does Interpretability and Steering work?
+
+The best foundational explanation is in the [Golden Gate Claude](https://www.anthropic.com/news/golden-gate-claude) paper which is both thorough and easy to read, but I have tried my best to summarize interpretability and steering work from the view of an AI dev.
+
+**Interpretability:**
+
+- You can breakdown a LLM into a set of ‘features’ which describe different concepts e.g. The Golden Gate Bridge, the arabic language, etc.
+- Given some text input, you can figure out which one of these features activate in the LLMs “brain”. This happens quickly, cheaply and reliably, the same text will always activate the same features.
+
+**Steering:**
+
+- When generating, you can activate a particular feature at a particular intensity.
+- Different features at different intensities will have different effects. For example, the Arabic feature at sufficient intensity will make your model speak Arabic. Turning up the golden gate bridge feature all the way will make your model think it’s the golden gate bridge.
+- You can steer on the fly by activating and deactivating features based on the tokens and other features you see. For example, when you detect the start of a coding sequence, you might turn up certain features related to coding in the language.
+
+## What problems does it solve?
+
+### 1. Capturing style that cannot be described in words
+
+One of the hardest problems with LLMs is capturing and reproducing a specific style.
+
+In a prompt you might say: “friendly and concise”, but you might actually want something like: “70% friendly, 50% concise, 80% professional”.
+
+Or you may want to emulate a specific person, but find that the prompt: “be more like [person]” doesn’t work.
+
+Interpretability and steering allows you to break down a style into a set of features, and then steer the model by activating and deactivating those features. 
+
+In fact, research is already showing that you can steer text, voice and images.
+
+<div class='bg-gray-100/80 px-4 pl-8 border-l-4 border-amber-500 ml-4'>
+	<div class='text-2xl font-playfair pt-1'>
+		Examples
+	</div>
+#### Text Styles
+
+Linus writes about [steering text generation](https://thesephist.com/posts/prism/) by training a text embedding classifier
+
+<img
+	class='mt-2 w-3/4'
+	src='/images/interpretability/text.png'
+	alt='Text steering'
+/>
+
+#### Voice Styles
+
+[Hume](https://x.com/GopalKRaman/status/1832200457621557594/video/1) is able to break down a voice into components, and then let you tune up and down features like “nasal” or “crisp”
+
+<img
+	class='mt-2 w-3/4'
+	src='/images/interpretability/voice.png'
+	alt='Voice steering'
+/>
+
+#### Image Styles
+
+[Featurelab.xyz](http://Featurelab.xyz) by Gytis shows how images can be broken down into distinct features, and also how you can generate images by composing those features together.
+
+<img
+	class='mt-2 w-3/4'
+	src='/images/interpretability/images.png'
+	alt='Image steering'
+/>
+</div>
+
+### 2. Less need for RLHF
+
+RLHF (and related techniques) have so far been the primary way of creating a system personality (e.g. concise, helpful) and imposing system limits (e.g. do not respond about topics related to racism).
+
+The problem is that RLHF famously has side effects. It can lead to “false refusals” where the AI refuses to do something that ican do (the llama paper cites 1-5% of new false refusals), and sometimes degrades quality, e.g. RLHF to be more concise, can also make a model respond with code comments that just say to fill in the code.
+
+Steering potentially allows us to react only if we see a feature activate (eg., Anthropic has detected a ‘[scam emails](https://transformer-circuits.pub/2024/scaling-monosemanticity/features/index.html?featureId=34M_15460472)’ feature) and implement an intervention only then by activating another feature, or deactivating that feature.
+
+It also allows us to choose a personality for the model by choosing particular personality and response features to activate (e.g. a [sycophantic](https://transformer-circuits.pub/2024/scaling-monosemanticity/features/index.html?featureId=1M_847723) feature).
+
+Even better, steering happens at inference time unlike RLHF, which means that API devs should be able to choose how the model is steered more specifically, vs having to rely on the model providers making large blanket choices that affect everyone via RLHF in post-training.
+
+### 3. Remembering User Preferences vs User Requests
+
+When chatting may give you a *request* like “tell me the capital of France” or they may state a **preference** like “please respond more briefly” or “speak in Arabic”
+
+Over the course of a long conversation, these preferences may be lost in the context window. But steering allows you to recognize an important preference and save it permanently, making sure that your AI is always responding more briefly. 
+
+### 4. Cheap, Fast, Reproducible Classification
+
+You may have a bunch of examples of emails that you would describe as spam, but you don’t have a way of concisely describing to the AI what “spam” means. 
+
+Right now, you could give the gpt-4o mini a set of 100 examples and ask it to classify each email. This is not bad, but it is a bit unreliable and costly.
+
+With interpretability, you can give the AI a large set of examples of spam emails and see what features activate the most, compared to what features activate in non-spam emails.
+
+Building this set of ‘spam features’ will allow you to essentially create a cheap spam classifier without having to train a seperate model.
+
+## What are the downsides?
+
+### 1. Moving the model ‘out of distribution’
+
+Steering is like brain surgery, prompting is like asking politely. Steering a model to overweight a feature can cause it to not just bring it up excessively (e.g. Anthropic describing at high weights how Golden Gate Claude thinks that it is the Golden Gate Bridge), but also to just generate incoherent text or text that doesn’t follow the rules of language.
+
+### 2. Not understanding what a feature does
+
+Features are labelled by a mixture of humans and machines by reading a list of output that is triggered by said features and reading what they might have in common. 
+
+However, this labeling is still early on, browsing lists of features I occasionally find myself disagreeing with how they are labeled.
+
+Given that there might tens or hundreds of thousands of features, it seems likely that some will be mislabeled or misunderstood (broadly the research field addressing this is called autointerp).
+
+### 3. Activating other features & circuits
+
+Some features activate other features in ways that are complex to understand. We may be introducing other side effects while activating a feature, in the same way that RLHF introduces side effects. There has been no wide scale use of feature steering (unless Anthropic is doing it under the hood), and so it’s hard to tell what side effects they might produce.
+
+## Conclusion
+
+While a lot of the interpretability features are still a bit too early to show consistent reliability, they promise developers a lot more fine-grained control of models.
+
+As a tradeoff, we should expect the next gen model APIs to get a lot more powerful but also more complicated, requiring more than just prompting and RAG to get the outputs we want.

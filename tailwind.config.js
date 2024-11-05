@@ -18,6 +18,9 @@ const config = {
 			}
 		},
 		extend: {
+			fontSize: {
+				'xxs': '0.625rem',
+			},
 			colors: {
 				border: 'hsl(var(--border) / <alpha-value>)',
 				input: 'hsl(var(--input) / <alpha-value>)',
@@ -61,6 +64,9 @@ const config = {
 			fontFamily: {
 				sans: [...fontFamily.sans],
 				satoshi: ['Satoshi', 'sans'],
+				newsreader: ['Newsreader Variable', 'serif'],
+				playfair: ['Playfair Display Variable', 'serif'],
+				cabinet: ['CabinetGrotesk', 'sans']
 			}
 		}
 	}
