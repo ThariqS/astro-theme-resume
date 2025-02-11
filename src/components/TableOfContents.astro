@@ -1,27 +1,28 @@
 ---
-import type { MarkdownHeading } from 'astro';
+import type { MarkdownHeading } from 'astro'
 
 interface Props {
-  headings: MarkdownHeading[];
+	headings: MarkdownHeading[]
 }
 
-const { headings } = Astro.props;
+const { headings } = Astro.props
 
-const filteredHeadings = headings.filter((heading) => heading.depth <= 3);
+const filteredHeadings = headings.filter((heading) => heading.depth <= 3)
 ---
 
-<nav class='hidden lg:block fixed left-4 top-24 w-64 mt-12 ml-4'>
-	<h2 class='text-lg font-semibold mb-2'>Contents</h2>
+<nav class='fixed right-4 top-24 ml-4 mt-12 hidden w-64 lg:block'>
+	<h2 class='mb-2 text-lg font-semibold'>CONTENTS</h2>
 	<div class='flex flex-col gap-2'>
 		{
 			filteredHeadings.map((heading) => (
-				<a 
+				<a
 					class={`text-sm hover:underline ${heading.depth === 3 ? 'text-gray-500' : ''}`}
 					href={`#${heading.slug}`}
 					style={`margin-left: ${(heading.depth - 2) * 1}rem`}
 				>
 					{heading.text}
 				</a>
-			))}
+			))
+		}
 	</div>
 </nav>

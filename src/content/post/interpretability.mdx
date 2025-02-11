@@ -5,15 +5,11 @@ publishDate: '4 Nov 2024'
 tags: ['interpretability']
 ---
 
-One of the biggest advancements in LLMs this year has been in the field of interpretability- the ability to understand what a LLM is “thinking” and to steer its generation process.
+Arguably the biggest breakthrough in LLM research this year has been in interpretability- the ability to understand what a LLM is “thinking”.
 
-The most famous example of this is probably Anthropic’s [Golden Gate Claude](https://www.anthropic.com/news/golden-gate-claude), which is a model that can be steered to generate text in a particular style. This work isn’t limited to text, it's also happening with [images](https://featurelab.xyz/), [voice](https://x.com/GopalKRaman/status/1832200457621557594/video/1) and even [protein models](https://www.nature.com/articles/s41587-024-0206-x).
+The most famous example is Anthropic’s [Golden Gate Claude](https://www.anthropic.com/news/golden-gate-claude), though this work isn’t limited to text, researchers are also working on [images](https://featurelab.xyz/), [voice](https://x.com/GopalKRaman/status/1832200457621557594/video/1) and even [protein models](https://www.nature.com/articles/s41587-024-0206-x).
 
-But in contrast to the excitement amongst researchers, AI developers seem less enthused or even confused. 
-
-*“Why can’t we just prompt that?”* is a question I've heard often. 
-
-In this post I dive into how we might use interpretability & steering features in our applications.
+But while interpretability is most often discussed in the context of research & AI safety, it also offers a promise to developers of more fine-grained control and reliability from their models.
 
 ## How does Interpretability and Steering work?
 
@@ -30,7 +26,13 @@ The best foundational explanation is in the [Golden Gate Claude](https://www.ant
 - Different features at different intensities will have different effects. For example, the Arabic feature at sufficient intensity will make your model speak Arabic. Turning up the golden gate bridge feature all the way will make your model think it’s the golden gate bridge.
 - You can steer on the fly by activating and deactivating features based on the tokens and other features you see. For example, when you detect the start of a coding sequence, you might turn up certain features related to coding in the language.
 
-## What problems does it solve?
+## The Promise
+
+At the Anthropic hackathon, Dario Amoedei described how interpretability is maybe not the right word to describe what they are doing.
+
+The other side of interpretability is steering, preciseness & reliability. If interpretability delivers on its promise, developers should have a level of control over their models that has not been possible thus far.
+
+## What are the applications?
 
 ### 1. Capturing style that cannot be described in words
 
@@ -50,7 +52,9 @@ In fact, research is already showing that you can steer text, voice and images.
 	</div>
 #### Text Styles
 
-Linus writes about [steering text generation](https://thesephist.com/posts/prism/) by training a text embedding classifier
+Linus writes about [steering text generation](https://thesephist.com/posts/prism/) by training a text embedding classifier.
+
+[Goodfire.ai](https://x.com/GoodfireAI/status/1839002465984741745) provides a tool for steering llama models based on features that you detect.
 
 <img
 	class='mt-2 w-3/4'
@@ -83,13 +87,15 @@ Linus writes about [steering text generation](https://thesephist.com/posts/prism
 
 RLHF (and related techniques) have so far been the primary way of creating a system personality (e.g. concise, helpful) and imposing system limits (e.g. do not respond about topics related to racism).
 
-The problem is that RLHF famously has side effects. It can lead to “false refusals” where the AI refuses to do something that ican do (the llama paper cites 1-5% of new false refusals), and sometimes degrades quality, e.g. RLHF to be more concise, can also make a model respond with code comments that just say to fill in the code.
+The problem is that RLHF famously has side effects. It can lead to “false refusals” where the AI refuses to do something that it can do (the llama paper cites 1-5% of new false refusals), and sometimes degrades quality, e.g. RLHF to be more concise, can also make a model respond with code comments that just say to fill in the code.
 
 Steering potentially allows us to react only if we see a feature activate (eg., Anthropic has detected a ‘[scam emails](https://transformer-circuits.pub/2024/scaling-monosemanticity/features/index.html?featureId=34M_15460472)’ feature) and implement an intervention only then by activating another feature, or deactivating that feature.
 
 It also allows us to choose a personality for the model by choosing particular personality and response features to activate (e.g. a [sycophantic](https://transformer-circuits.pub/2024/scaling-monosemanticity/features/index.html?featureId=1M_847723) feature).
 
-Even better, steering happens at inference time unlike RLHF, which means that API devs should be able to choose how the model is steered more specifically, vs having to rely on the model providers making large blanket choices that affect everyone via RLHF in post-training.
+There has even been some work on 'uncensoring' RLHFed models through a technique called [abliteration](https://huggingface.co/blog/mlabonne/abliteration).
+
+Most promisingly, steering happens at inference time unlike RLHF which means that API devs should be able to choose how the model is steered more specifically, vs having to rely on the model providers making large blanket choices that affect everyone via RLHF in post-training.
 
 ### 3. Remembering User Preferences vs User Requests
 
@@ -119,11 +125,13 @@ Features are labelled by a mixture of humans and machines by reading a list of o
 
 However, this labeling is still early on, browsing lists of features I occasionally find myself disagreeing with how they are labeled.
 
-Given that there might tens or hundreds of thousands of features, it seems likely that some will be mislabeled or misunderstood (broadly the research field addressing this is called autointerp).
+Given that there might tens or hundreds of thousands of features, it seems likely that some will be mislabeled or misunderstood, which will make steering using them less reliable.
 
 ### 3. Activating other features & circuits
 
-Some features activate other features in ways that are complex to understand. We may be introducing other side effects while activating a feature, in the same way that RLHF introduces side effects. There has been no wide scale use of feature steering (unless Anthropic is doing it under the hood), and so it’s hard to tell what side effects they might produce.
+Some features activate other features in ways that are complex to understand (these are sometimes called circuits). We may be introducing other side effects while activating a feature, in the same way that RLHF introduces side effects. 
+
+There has been no wide scale use of feature steering (unless Anthropic is doing it under the hood), and so it’s hard to tell what side effects they might produce.
 
 ## Conclusion
 

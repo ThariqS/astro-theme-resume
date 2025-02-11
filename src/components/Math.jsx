@@ -8,3 +8,7 @@ export default function Math({ math }) {
 		</BlockMath>
 	)
 }
+
+export function MathInline({ math }) {
+	return <InlineMath className='text-lg text-sky-100'>{math}</InlineMath>
+}

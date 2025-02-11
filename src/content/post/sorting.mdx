@@ -1,0 +1,187 @@
+---
+title: 'Semantic sorting using LLMs and TrueSkill'
+description: 'Sorting large amounts of data using LLMs and TrueSkill'
+publishDate: '11 Feb 2025'
+---
+
+import { MathInline } from '../../components/Math.jsx'
+
+<div className='border-grey-700 mb-4 border-b py-2'>
+	<p>
+		Large Language Models (LLMs) are remarkably good at understanding and comparing concepts, but
+		getting them to consistently sort large amounts of data is still quite difficult.
+	</p>
+	<p>
+		In this post, I share a technique that combines the semantic understanding of LLMs with the
+		mathematical rigor of ELO algorithms like TrueSkill to create robust, scalable semantic sorting.
+	</p>
+</div>
+
+## The Challenge with LLM Sorting
+
+Let's say you'd like a LLM to create an ordered list of items, based on a prompt. For example, you might sort job candidates, feature requests, movie recommendations, or customer feedback.
+
+When you ask an LLM to sort a large list of items by itself you run into several problems:
+
+1. **Context window limitations** - You can only feed so many items at once
+2. **Consistency issues** - The model might rank A > B and B > C, but then rank C > A another time
+3. **Quality degradation** - As the list grows longer, the quality of sorting tends to decrease as attention degrades
+4. **Token limits** - Getting back large sorted lists can bump up against output token limits
+
+## Enter TrueSkill
+
+TrueSkill (or any ELO algorithm), originally developed by Microsoft for Xbox Live matchmaking, provides an elegant solution to these challenges.
+Trueskill allowed Microsoft to compare two players who had never played before, using the history of their games to estimate their skill level.
+
+In this context, we can think of each item as a player, and the "games" between them are run by the LLM sorting them in a small batch.
+
+So, instead of asking a LLM to sort everything at once, we can:
+
+- Break the data into small, manageable batches
+- Have the LLM order these smaller batches _(play a "game" between them)_
+- Use TrueSkill to update the ratings of the items based on the results of the games
+
+In the end, we will have a global ranking of the items, and a confidence interval for each item's rating, informed by the LLMs knowledge.
+
+This scales to very large datasets, and new items can be added incrementally without re-sorting everything.
+
+## Implementation
+
+Here's how it works in practice:
+
+1. Initialize a TrueSkill rating for each item in your dataset
+2. Repeatedly:
+   - Sample a small batch of items (e.g., 10)
+   - Ask the LLM to sort them
+   - Update TrueSkill ratings based on these results
+3. After sufficient iterations, sort by the conservative rating estimate (μ - 3σ)
+
+Here's a simplified version of the core loop:
+
+```python
+import trueskill
+from typing import Dict, List
+
+# Initialize ratings for all items
+ratings: Dict[int, trueskill.Rating] = {
+    item_id: trueskill.Rating() for item_id in all_items
+}
+
+for match in range(num_matches):
+    # Sample batch of items
+    batch = random.sample(all_items, batch_size)
+
+    # Get sorted order from LLM
+    sorted_batch = llm_sort(batch)
+
+    # Update TrueSkill ratings
+    teams = [[ratings[item]] for item in sorted_batch]
+    new_ratings = trueskill.rate(teams)
+
+    # Update stored ratings
+    for i, item in enumerate(sorted_batch):
+        ratings[item] = new_ratings[i][0]
+```
+
+### LLM Sorting Prompt
+
+The key to making this work well is crafting good prompts for the LLM sorting step. Here's an example prompt template, but you should customize it to your use case.
+
+```python
+prompt = f"""You are an expert at analyzing {domain}.
+Please sort these items by {criteria}.
+Consider:
+- {consideration_1}
+- {consideration_2}
+- {consideration_3}
+
+Items to sort:
+{"\n".join(f'{item["id"]}. "{item["text"]}"' for item in items)}
+
+Return ONLY a comma-separated list of ids sorted in order,
+with no other text or explanation. For example: "123,456,789"
+"""
+```
+
+By requesting a specific output format and keeping the task focused, we get more reliable results from the LLM.
+
+## An Example
+
+Let's walk through a concrete example.
+
+Let's say you have over 10,000 pieces of customer feedback you've collected over the past year. And you want to organize it by "actionability".
+
+You can write a prompt for actionability that you like, getting the LLM to combine factors like technical feasibility, potential impact, and clarity of the request. Maybe even your codebase or product roadmap.
+
+The feedback might look like this:
+
+- "The blue button is hard to see"
+- "Would be nice if it worked more like Excel"
+- "Sometimes crashes when I have too many tabs open"
+- "Love the product but wish it was faster"
+- "The API needs better documentation"
+
+Traditional sorting methods struggle here because:
+
+- Simple keyword matchin or embedding misses the meaning
+- Manual sorting of 10,000 items is overwhelming
+- Each piece of feedback might be actionable for different reasons
+- LLMs can't handle 10,000 items at once
+
+The system will then break these into smaller batches, and ask the LLM to sort them, perhaps like so:
+
+```
+1. "Save button sometimes doesn't work"
+2. "Would be cool to have dark mode"
+3. "The UX feels clunky"
+4. "Need better keyboard shortcuts"
+5. "Can't find where to change my password"
+```
+
+### When to Use This
+
+This works really well when your sorting criteria is well desribed by a prompt, and you don't have a large amount of preference or personalization data.
+
+For example, if you wanted to make a version of Netflix where a user provides a prompt their preferences, you could use this to sort the results.
+
+The flexibiltiy of a prompt allows you to cover a really wide variety of preferences and edge cases.
+
+## When are you "done"?
+
+The number of matches needed for to converge on a result scales with dataset size and distribution of results. Luckily TrueSkill is very robust to the number of matches played, and LLMs are quite stable in their predictions.
+
+I've found that even 1-2 matches per item can be enough to get a good enough result for most use cases. For a list of 10,000 items and a 10 item batch size, this could mean as little as 500 matches.
+
+If you want a more quantitative measure of how good your results are, TrueSkill gives each item a rating, which is a combination of its skill level and its uncertainty.
+
+- μ (mu): The estimated skill rating
+- σ (sigma): The uncertainty in that rating
+
+Sigma is usually initialized to 8.333, which is a good starting point, you can measure the confidence of your results by looking at how much the sigma values change.
+
+And of course course, remember the golden rule of Machine Learning **look at your data**, to make sure the results are what you expect.
+
+## Optimization
+
+### Smart Batch Selection
+
+Rather than selecting batches randomly, we can be strategic about which items to compare. Some effective strategies include:
+
+1. **Rating-based grouping**: Compare items with similar ratings to refine close distinctions
+2. **High uncertainty pairs**: Prioritize comparisons between items with high sigma values
+3. **Bridge comparisons**: Occasionally compare items from different rating tiers to verify tier boundaries
+4. **Novel pair maximization**: Prioritize pairs that haven't been compared before
+
+### Using Confidence Intervals
+
+The sigma value provides a built-in confidence measure. We can use this to:
+
+1. **Guide batch selection**: Prioritize items with high sigma values
+2. **Detect convergence**: Monitor when sigma values stabilize
+3. **Balance exploration/exploitation**: Mix high and low sigma items in batches
+
+## Conclusion
+
+I've run into this problem a few times now, and recommended this solution to a few friends, so I hope it's useful for you as well. Let me know if it is!
+
+The code for this project is available at [GitHub link]. I'd love to hear about other applications and improvements to this technique.
