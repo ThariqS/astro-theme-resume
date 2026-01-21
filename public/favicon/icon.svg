@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Concentric circles - consciousness rippling outward -->
+  <!-- Gold (#d4af37) emanating from center to dark (#1a1a1a) -->
+  <circle cx="16" cy="16" r="3" stroke="#d4af37" stroke-width="1.5" fill="none"/>
+  <circle cx="16" cy="16" r="7" stroke="#c9a033" stroke-width="1.5" fill="none"/>
+  <circle cx="16" cy="16" r="11" stroke="#8a7a3a" stroke-width="1.5" fill="none"/>
+  <circle cx="16" cy="16" r="15" stroke="#4a4a3a" stroke-width="1.5" fill="none"/>
+</svg>
