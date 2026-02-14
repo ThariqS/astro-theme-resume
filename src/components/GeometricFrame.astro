@@ -1,0 +1,59 @@
+---
+interface Props {
+	class?: string
+	size?: 'sm' | 'md' | 'lg'
+}
+
+const { class: className = '', size = 'md' } = Astro.props
+
+const sizeClasses = {
+	sm: 'w-32 h-32',
+	md: 'w-40 h-40',
+	lg: 'w-48 h-48'
+}
+---
+
+<div class={`relative ${sizeClasses[size]} ${className}`}>
+	{/* Octagonal frame border */}
+	<div class='absolute inset-0 flex items-center justify-center'>
+		<svg viewBox='0 0 200 200' class='absolute w-full h-full text-gold opacity-60'>
+			{/* Outer octagon */}
+			<polygon
+				points='70,15 130,15 185,70 185,130 130,185 70,185 15,130 15,70'
+				fill='none'
+				stroke='currentColor'
+				stroke-width='2'
+			/>
+			{/* Inner decorative octagon */}
+			<polygon
+				points='75,25 125,25 175,75 175,125 125,175 75,175 25,125 25,75'
+				fill='none'
+				stroke='currentColor'
+				stroke-width='1'
+				opacity='0.5'
+			/>
+			{/* Corner ornaments */}
+			<g class='text-bronze' opacity='0.7'>
+				{/* Top corners */}
+				<circle cx='70' cy='15' r='3' fill='currentColor' />
+				<circle cx='130' cy='15' r='3' fill='currentColor' />
+				{/* Right corners */}
+				<circle cx='185' cy='70' r='3' fill='currentColor' />
+				<circle cx='185' cy='130' r='3' fill='currentColor' />
+				{/* Bottom corners */}
+				<circle cx='130' cy='185' r='3' fill='currentColor' />
+				<circle cx='70' cy='185' r='3' fill='currentColor' />
+				{/* Left corners */}
+				<circle cx='15' cy='130' r='3' fill='currentColor' />
+				<circle cx='15' cy='70' r='3' fill='currentColor' />
+			</g>
+		</svg>
+	</div>
+
+	{/* Content slot with clipping */}
+	<div class='relative w-full h-full flex items-center justify-center p-3'>
+		<div class='w-full h-full rounded-full overflow-hidden warm-shadow-lg'>
+			<slot />
+		</div>
+	</div>
+</div>

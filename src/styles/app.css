@@ -2,63 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-	font-family: 'Satoshi';
-	src: url('/fonts/Satoshi-Variable.ttf');
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: 'Satoshi';
-	src: url('/fonts/Satoshi-VariableItalic.ttf');
-	font-style: italic;
-	font-display: swap;
-}
-
 @layer base {
 	:root {
-		--background: 210 33% 99%;
-		--foreground: 240 10% 3.9%;
-		--card: 0 0% 100%;
-		--card-foreground: 240 10% 3.9%;
-		--popover: 0 0% 100%;
-		--popover-foreground: 240 10% 3.9%;
-		--primary: 240 5.9% 10%;
-		--primary-foreground: 0 0% 98%;
-		--secondary: 240 4.8% 95.9%;
-		--secondary-foreground: 240 5.9% 10%;
-		--muted: 240 4.8% 95.9%;
-		--muted-foreground: 240 3.8% 46.1%;
-		--accent: 240 4.8% 95.9%;
-		--accent-foreground: 240 5.9% 10%;
-		--destructive: 0 72.22% 50.59%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 240 5.9% 90%;
-		--input: 240 5.9% 90%;
-		--ring: 240 5.9% 10%;
+		/* Sufi-inspired spiritual journal palette */
+		--background: 42 45% 97%; /* Warm parchment #FAF7F0 */
+		--foreground: 215 28% 17%; /* Deep indigo #1e2d3d */
+		--card: 40 40% 95%; /* Lighter parchment #F5F1E8 */
+		--card-foreground: 215 28% 17%;
+		--popover: 40 40% 95%;
+		--popover-foreground: 215 28% 17%;
+		--primary: 215 28% 17%; /* Deep indigo */
+		--primary-foreground: 42 45% 97%;
+		--secondary: 40 35% 85%; /* Soft beige */
+		--secondary-foreground: 215 28% 17%;
+		--muted: 40 25% 88%;
+		--muted-foreground: 215 15% 45%;
+		--accent: 43 74% 52%; /* Warm gold #d4af37 */
+		--accent-foreground: 215 28% 17%;
+		--destructive: 0 72% 51%;
+		--destructive-foreground: 42 45% 97%;
+		--border: 40 20% 82%; /* Warm border */
+		--input: 40 20% 82%;
+		--ring: 43 74% 52%; /* Gold ring */
 		--radius: 0.5rem;
+
+		/* Custom spiritual colors */
+		--gold: 43 74% 52%; /* #d4af37 */
+		--bronze: 30 45% 45%; /* Oxidized bronze */
+		--sage: 140 20% 55%; /* Sage green */
+		--dusty-rose: 350 35% 65%; /* Dusty rose */
+		--burnt-sienna: 15 60% 45%; /* Burnt sienna */
 	}
 	.dark {
-		--background: 240 10% 3.9%;
-		--foreground: 0 0% 98%;
-		--card: 240 10% 3.9%;
-		--card-foreground: 0 0% 98%;
-		--popover: 240 10% 3.9%;
-		--popover-foreground: 0 0% 98%;
-		--primary: 0 0% 98%;
-		--primary-foreground: 240 5.9% 10%;
-		--secondary: 240 3.7% 15.9%;
-		--secondary-foreground: 0 0% 98%;
-		--muted: 240 3.7% 15.9%;
-		--muted-foreground: 240 5% 64.9%;
-		--accent: 240 3.7% 15.9%;
-		--accent-foreground: 0 0% 98%;
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 0 0% 98%;
-		--border: 240 3.7% 15.9%;
-		--input: 240 3.7% 15.9%;
-		--ring: 240 4.9% 83.9%;
+		/* Dark mode: Deep contemplative tones */
+		--background: 215 35% 12%; /* Deep navy */
+		--foreground: 42 45% 95%;
+		--card: 215 30% 15%;
+		--card-foreground: 42 45% 95%;
+		--popover: 215 30% 15%;
+		--popover-foreground: 42 45% 95%;
+		--primary: 42 45% 95%;
+		--primary-foreground: 215 35% 12%;
+		--secondary: 215 25% 20%;
+		--secondary-foreground: 42 45% 95%;
+		--muted: 215 20% 25%;
+		--muted-foreground: 42 20% 65%;
+		--accent: 43 65% 48%; /* Slightly muted gold */
+		--accent-foreground: 215 35% 12%;
+		--destructive: 0 62% 31%;
+		--destructive-foreground: 42 45% 95%;
+		--border: 215 20% 25%;
+		--input: 215 20% 25%;
+		--ring: 43 65% 48%;
+
+		/* Custom spiritual colors for dark mode */
+		--gold: 43 65% 48%;
+		--bronze: 30 40% 38%;
+		--sage: 140 15% 45%;
+		--dusty-rose: 350 30% 55%;
+		--burnt-sienna: 15 50% 40%;
 	}
 }
 
@@ -68,5 +70,115 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		/* Paper texture overlay */
+		position: relative;
+	}
+	body::before {
+		content: '';
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0.03;
+		pointer-events: none;
+		z-index: 9999;
+		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+	}
+}
+
+@layer utilities {
+	/* Geometric pattern utilities */
+	.geometric-border {
+		border-width: 2px;
+		border-style: solid;
+		border-image: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--bronze))) 1;
+	}
+
+	.warm-shadow {
+		box-shadow: 0 4px 20px -4px hsl(var(--bronze) / 0.2),
+					0 2px 8px -2px hsl(var(--gold) / 0.1);
+	}
+
+	.warm-shadow-lg {
+		box-shadow: 0 10px 40px -8px hsl(var(--bronze) / 0.25),
+					0 4px 16px -4px hsl(var(--gold) / 0.15);
+	}
+
+	.golden-glow {
+		box-shadow: 0 0 20px hsl(var(--gold) / 0.3);
+	}
+
+	.text-gold {
+		color: hsl(var(--gold));
+	}
+
+	.text-bronze {
+		color: hsl(var(--bronze));
+	}
+
+	.bg-gold {
+		background-color: hsl(var(--gold));
+	}
+
+	.border-gold {
+		border-color: hsl(var(--gold));
+	}
+
+	.border-bronze {
+		border-color: hsl(var(--bronze));
+	}
+
+	/* Animations for contemplative interactions */
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes rotate-gentle {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.animate-fade-in-up {
+		animation: fadeInUp 0.8s ease-out forwards;
+	}
+
+	.animate-rotate-gentle {
+		animation: rotate-gentle 60s linear infinite;
+	}
+
+	/* Decorative text effects */
+	.drop-cap::first-letter {
+		float: left;
+		font-size: 4rem;
+		line-height: 0.8;
+		margin: 0.1em 0.1em 0 0;
+		color: hsl(var(--gold));
+		font-weight: 600;
+	}
+
+	.illuminated-link {
+		position: relative;
+		text-decoration: none;
+		background: linear-gradient(to right, hsl(var(--gold)), hsl(var(--gold))) no-repeat;
+		background-size: 0% 2px;
+		background-position: left bottom;
+		transition: background-size 0.3s ease;
+	}
+
+	.illuminated-link:hover {
+		background-size: 100% 2px;
+		color: hsl(var(--gold));
 	}
 }

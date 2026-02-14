@@ -12,27 +12,32 @@ type Props<Tag extends HTMLTag> = {
 
 const { as: Tag = 'div', post, withDesc = false } = Astro.props
 const postDate = post.data.updatedDate ?? post.data.publishDate
+
+const { remarkPluginFrontmatter } = await post.render()
 ---
 
-<li class='flex flex-col gap-2 sm:flex-row sm:gap-x-4 [&_q]:basis-full'>
-	<FormattedDate class='min-w-[120px]' date={postDate} />
-
-	<Tag class='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:w-full'>
-		{post.data.draft && <span class='text-red-500'>(Draft) </span>}
+<li class='flex items-baseline justify-between gap-4'>
+	<Tag class='flex flex-col gap-1'>
+		<div class='flex items-center gap-2'>
+			{post.data.pinned && <span class='text-gold/60 text-xs' title='Pinned'>&#x2726;</span>}
+			{post.data.draft && <span class='text-red-500 text-sm font-medium'>(Draft) </span>}
 			<a
 				data-astro-prefetch
-			href={`/blog/${post.slug}/`}
-			class='transition-all hover:text-muted-foreground'
-		>
-			{post.data.title}
-		</a>
+				href={`/blog/${post.slug}/`}
+				class='font-cormorant text-lg font-semibold illuminated-link'
+			>
+				{post.data.title}
+			</a>
+			<span class='text-xs text-muted-foreground'>· {remarkPluginFrontmatter.minutesRead}</span>
 			{post.data.hackerNewsId && <HackerNewsScore id={post.data.hackerNewsId} client:load />}
+		</div>
 		{
 			withDesc && (
-				<p class='line-clamp-3 block text-sm italic text-muted-foreground'>
+				<p class='line-clamp-3 block text-sm leading-relaxed text-muted-foreground'>
 					{post.data.description}
 				</p>
 			)
 		}
 	</Tag>
+	<FormattedDate class='shrink-0 text-sm text-muted-foreground' date={postDate} />
 </li>

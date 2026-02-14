@@ -1,0 +1,89 @@
+---
+import { cn } from '@/utils'
+
+interface Props {
+	class?: string
+	title: string
+	author: string
+	link?: string
+}
+
+const { class: className, title, author, link } = Astro.props
+---
+
+<figure
+	class={cn(
+		'group relative my-8 rounded-2xl bg-primary-foreground p-6 transition-all duration-300',
+		className
+	)}
+>
+	<!-- Vertical accent bar -->
+	<div
+		class="absolute left-0 top-6 bottom-6 w-1 rounded-full bg-gradient-to-b from-gold via-gold/60 to-bronze"
+	></div>
+
+
+	<div class="relative z-10 pl-4">
+		<div class="book-quote-content mb-5 font-cormorant text-lg italic leading-relaxed text-foreground/90">
+			<slot />
+		</div>
+
+		<footer class="flex items-center justify-between border-t border-border/50 pt-4">
+			<cite class="not-italic text-sm">
+				<span class="font-medium text-foreground">{author}</span>
+				<span class="mx-2 text-gold/60">·</span>
+				<span class="italic text-muted-foreground">{title}</span>
+			</cite>
+
+			{
+				link && (
+					<a
+						href={link}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="group/link flex items-center gap-1.5 rounded-md border border-border/50 bg-background/50 px-2.5 py-1 text-xs text-muted-foreground transition-all hover:border-gold/40 hover:text-gold"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="12"
+							height="12"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+						</svg>
+						<span>Get Book</span>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="10"
+							height="10"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="opacity-50 transition-transform group-hover/link:translate-x-0.5"
+						>
+							<path d="M7 7h10v10" />
+							<path d="M7 17 17 7" />
+						</svg>
+					</a>
+				)
+			}
+		</footer>
+	</div>
+</figure>
+
+<style is:global>
+	.book-quote-content mark {
+		background-color: hsl(var(--gold) / 0.25);
+		color: inherit;
+		padding: 0.1em 0.2em;
+		border-radius: 0.2em;
+	}
+</style>

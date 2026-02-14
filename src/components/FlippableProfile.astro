@@ -1,0 +1,465 @@
+---
+import { Image } from 'astro:assets'
+import astro from '../assets/thariq-proffesional.jpg'
+// TODO: Replace this with your personal/spiritual profile picture
+import personalPhoto from '../assets/thariq3.png' // Using same image as placeholder
+
+interface Props {
+	class?: string
+	size?: 'sm' | 'md' | 'lg'
+}
+
+const { class: className = '', size = 'lg' } = Astro.props
+
+const sizeClasses = {
+	sm: 'w-32 h-32',
+	md: 'w-40 h-40',
+	lg: 'w-48 h-48'
+}
+---
+
+<div class={`flip-container ${sizeClasses[size]} ${className}`}>
+	<div class='flip-inner'>
+		{/* Front side - Professional */}
+		<div class='flip-face flip-front'>
+			<div class={`relative ${sizeClasses[size]}`}>
+				{/* Whirling Dervish inspired frame */}
+				<div class='absolute inset-0 flex items-center justify-center'>
+					<svg viewBox='0 0 200 200' class='absolute w-full h-full'>
+						{/* Outer spinning ring - slow rotation */}
+						<g class='whirl-slow'>
+							<circle
+								cx='100'
+								cy='100'
+								r='95'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='1'
+								class='text-gold dark:text-white opacity-40'
+							/>
+							{/* Broken arcs suggesting motion */}
+							<path
+								d='M 100 5 A 95 95 0 0 1 195 100'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								class='text-gold dark:text-white opacity-70'
+							/>
+							<path
+								d='M 195 100 A 95 95 0 0 1 100 195'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='1.5'
+								class='text-gold dark:text-white opacity-50'
+							/>
+						</g>
+
+						{/* Middle ring - medium rotation */}
+						<g class='whirl-medium'>
+							<circle
+								cx='100'
+								cy='100'
+								r='88'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='0.5'
+								class='text-gold dark:text-white opacity-30'
+							/>
+							{/* Flowing arc segments */}
+							<path
+								d='M 100 12 A 88 88 0 0 1 188 100'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='1.5'
+								class='text-bronze dark:text-white opacity-60'
+							/>
+							<path
+								d='M 12 100 A 88 88 0 0 1 100 12'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='1'
+								class='text-bronze dark:text-white opacity-40'
+							/>
+						</g>
+
+						{/* Inner ring - faster rotation */}
+						<g class='whirl-fast'>
+							<circle
+								cx='100'
+								cy='100'
+								r='82'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='0.5'
+								class='text-gold dark:text-white opacity-20'
+							/>
+							{/* Small accent arcs */}
+							<path
+								d='M 100 18 A 82 82 0 0 1 150 30'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								stroke-linecap='round'
+								class='text-gold dark:text-white opacity-60'
+							/>
+							<path
+								d='M 182 100 A 82 82 0 0 1 170 150'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								stroke-linecap='round'
+								class='text-gold dark:text-white opacity-60'
+							/>
+							<path
+								d='M 100 182 A 82 82 0 0 1 50 170'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								stroke-linecap='round'
+								class='text-gold dark:text-white opacity-60'
+							/>
+							<path
+								d='M 18 100 A 82 82 0 0 1 30 50'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								stroke-linecap='round'
+								class='text-gold dark:text-white opacity-60'
+							/>
+						</g>
+					</svg>
+				</div>
+
+				{/* Content with clipping */}
+				<div class='relative w-full h-full flex items-center justify-center p-3'>
+					<div class='w-full h-full rounded-full overflow-hidden warm-shadow-lg'>
+						<Image
+							src={astro}
+							alt='professional profile photo'
+							class='w-full h-full object-cover'
+							loading='eager'
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{/* Back side - Personal */}
+		<div class='flip-face flip-back'>
+			<div class={`relative ${sizeClasses[size]}`}>
+				{/* Whirling Dervish inspired frame */}
+				<div class='absolute inset-0 flex items-center justify-center'>
+					<svg viewBox='0 0 200 200' class='absolute w-full h-full'>
+						{/* Outer spinning ring - slow rotation */}
+						<g class='whirl-slow'>
+							<circle
+								cx='100'
+								cy='100'
+								r='95'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='1'
+								class='text-gold dark:text-white opacity-40'
+							/>
+							{/* Broken arcs suggesting motion */}
+							<path
+								d='M 100 5 A 95 95 0 0 1 195 100'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								class='text-gold dark:text-white opacity-70'
+							/>
+							<path
+								d='M 195 100 A 95 95 0 0 1 100 195'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='1.5'
+								class='text-gold dark:text-white opacity-50'
+							/>
+						</g>
+
+						{/* Middle ring - medium rotation */}
+						<g class='whirl-medium'>
+							<circle
+								cx='100'
+								cy='100'
+								r='88'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='0.5'
+								class='text-gold dark:text-white opacity-30'
+							/>
+							{/* Flowing arc segments */}
+							<path
+								d='M 100 12 A 88 88 0 0 1 188 100'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='1.5'
+								class='text-bronze dark:text-white opacity-60'
+							/>
+							<path
+								d='M 12 100 A 88 88 0 0 1 100 12'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='1'
+								class='text-bronze dark:text-white opacity-40'
+							/>
+						</g>
+
+						{/* Inner ring - faster rotation */}
+						<g class='whirl-fast'>
+							<circle
+								cx='100'
+								cy='100'
+								r='82'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='0.5'
+								class='text-gold dark:text-white opacity-20'
+							/>
+							{/* Small accent arcs */}
+							<path
+								d='M 100 18 A 82 82 0 0 1 150 30'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								stroke-linecap='round'
+								class='text-gold dark:text-white opacity-60'
+							/>
+							<path
+								d='M 182 100 A 82 82 0 0 1 170 150'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								stroke-linecap='round'
+								class='text-gold dark:text-white opacity-60'
+							/>
+							<path
+								d='M 100 182 A 82 82 0 0 1 50 170'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								stroke-linecap='round'
+								class='text-gold dark:text-white opacity-60'
+							/>
+							<path
+								d='M 18 100 A 82 82 0 0 1 30 50'
+								fill='none'
+								stroke='currentColor'
+								stroke-width='2'
+								stroke-linecap='round'
+								class='text-gold dark:text-white opacity-60'
+							/>
+						</g>
+					</svg>
+				</div>
+
+				{/* Content with clipping */}
+				<div class='relative w-full h-full flex items-center justify-center p-3'>
+					<div class='w-full h-full rounded-full overflow-hidden warm-shadow-lg'>
+						<Image
+							src={personalPhoto}
+							alt='personal profile photo'
+							class='w-full h-full object-cover'
+							loading='eager'
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	// Get site mode from URL parameter or default to 'personal'
+	function getSiteMode(): 'professional' | 'personal' {
+		if (typeof window !== 'undefined') {
+			const params = new URLSearchParams(window.location.search)
+			const mode = params.get('mode')
+			if (mode === 'personal' || mode === 'professional') {
+				return mode
+			}
+		}
+		return 'personal'
+	}
+
+	// Set site mode and update URL parameter
+	function setSiteMode(mode: 'professional' | 'personal') {
+		if (typeof window !== 'undefined') {
+			const url = new URL(window.location.href)
+			url.searchParams.set('mode', mode)
+			window.history.pushState({}, '', url.toString())
+		}
+
+		// Dispatch custom event for other components to listen to
+		document.dispatchEvent(
+			new CustomEvent('mode-change', {
+				detail: { mode }
+			})
+		)
+
+		// Professional mode = dark theme, Personal mode = light theme
+		const theme = mode === 'professional' ? 'dark' : 'light'
+		document.dispatchEvent(
+			new CustomEvent('theme-change', {
+				detail: { theme }
+			})
+		)
+	}
+
+	// Initialize flip state on page load
+	function initFlipState() {
+		const mode = getSiteMode()
+		const container = document.querySelector('.flip-container')
+		if (container && mode === 'personal') {
+			container.classList.add('flipped')
+		}
+	}
+
+	// Toggle flip on click
+	function handleFlipClick() {
+		const container = document.querySelector('.flip-container')
+		if (!container) return
+
+		const currentMode = getSiteMode()
+		const newMode = currentMode === 'professional' ? 'personal' : 'professional'
+
+		// Toggle flip animation
+		container.classList.toggle('flipped')
+
+		// Update mode
+		setSiteMode(newMode)
+	}
+
+	// Handle browser back/forward navigation
+	function handlePopState() {
+		initFlipState()
+		// Dispatch mode change event to update other components
+		const mode = getSiteMode()
+		document.dispatchEvent(
+			new CustomEvent('mode-change', {
+				detail: { mode }
+			})
+		)
+	}
+
+	// Set up event listeners
+	document.addEventListener('DOMContentLoaded', () => {
+		initFlipState()
+
+		const container = document.querySelector('.flip-container')
+		if (container) {
+			container.addEventListener('click', handleFlipClick)
+			// Make it keyboard accessible
+			container.setAttribute('role', 'button')
+			container.setAttribute('tabindex', '0')
+			container.addEventListener('keydown', (e) => {
+				if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+					e.preventDefault()
+					handleFlipClick()
+				}
+			})
+		}
+
+		// Listen for browser back/forward
+		window.addEventListener('popstate', handlePopState)
+	})
+
+	// Handle page navigation (Astro view transitions)
+	document.addEventListener('astro:page-load', () => {
+		initFlipState()
+	})
+
+	// Listen for mode changes from other components (like the toggle)
+	document.addEventListener('mode-change', (e: Event) => {
+		const customEvent = e as CustomEvent
+		const mode = customEvent.detail?.mode
+		const container = document.querySelector('.flip-container')
+
+		if (container && mode) {
+			// Update flip state to match the new mode
+			if (mode === 'personal') {
+				container.classList.add('flipped')
+			} else {
+				container.classList.remove('flipped')
+			}
+		}
+	})
+</script>
+
+<style>
+	.flip-container {
+		perspective: 1000px;
+		cursor: pointer;
+		transition: transform 0.2s ease;
+	}
+
+	.flip-container:hover {
+		transform: scale(1.05);
+	}
+
+	.flip-container:focus {
+		outline: 2px solid var(--color-gold);
+		outline-offset: 4px;
+	}
+
+	.flip-inner {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		transition: transform 0.6s;
+		transform-style: preserve-3d;
+	}
+
+	.flip-container.flipped .flip-inner {
+		transform: rotateY(180deg);
+	}
+
+	.flip-face {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+	}
+
+	.flip-front {
+		z-index: 2;
+	}
+
+	.flip-back {
+		transform: rotateY(180deg);
+	}
+
+	/* Whirling Dervish animations */
+	@keyframes whirl {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.whirl-slow {
+		transform-origin: center;
+		animation: whirl 30s linear infinite;
+	}
+
+	.whirl-medium {
+		transform-origin: center;
+		animation: whirl 20s linear infinite reverse;
+	}
+
+	.whirl-fast {
+		transform-origin: center;
+		animation: whirl 12s linear infinite;
+	}
+
+	/* Pause animation on hover for contemplation */
+	.flip-container:hover .whirl-slow,
+	.flip-container:hover .whirl-medium,
+	.flip-container:hover .whirl-fast {
+		animation-play-state: paused;
+	}
+</style>

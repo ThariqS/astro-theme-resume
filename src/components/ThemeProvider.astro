@@ -1,10 +1,18 @@
 <script is:inline>
-	const lightModePref = window.matchMedia('(prefers-color-scheme: light)')
+	// Get site mode from URL parameter (personal = light, professional = dark)
+	function getSiteMode() {
+		const params = new URLSearchParams(window.location.search)
+		const mode = params.get('mode')
+		if (mode === 'personal' || mode === 'professional') {
+			return mode
+		}
+		return 'personal' // default to personal mode
+	}
 
-	// Get user preference from local storage or from browser preference
-	function getUserPref() {
-		const storedTheme = localStorage.getItem('theme') ?? undefined
-		return storedTheme || (lightModePref.matches ? 'light' : 'dark')
+	// Get theme based on site mode (personal = light, professional = dark)
+	function getThemeFromMode() {
+		const mode = getSiteMode()
+		return mode === 'personal' ? 'light' : 'dark'
 	}
 
 	function setTheme(newTheme) {
@@ -12,11 +20,8 @@
 			return console.log(`Invalid theme value '${newTheme}' received. Expected 'light' or 'dark'.`)
 		}
 
-		localStorage.setItem('theme', newTheme)
-
 		const root = document.documentElement
 
-		// if current dark theme and new theme is dark, return
 		if (newTheme === 'dark' && root.classList.contains('dark')) {
 			return
 		} else if (newTheme === 'light' && !root.classList.contains('dark')) {
@@ -27,16 +32,13 @@
 	}
 
 	// Initial Setup
-	setTheme(getUserPref())
+	setTheme(getThemeFromMode())
 
 	// View Transitions hook to restore theme
-	document.addEventListener('astro:after-swap', () => setTheme(getUserPref()))
+	document.addEventListener('astro:after-swap', () => setTheme(getThemeFromMode()))
 
-	// Listen for theme-change custom event
+	// Listen for theme-change custom event (from mode toggle)
 	document.addEventListener('theme-change', (e) => {
 		setTheme(e.detail.theme)
 	})
-
-	// Listen for prefers-color-scheme change
-	lightModePref.addEventListener('change', (e) => setTheme(e.matches ? 'light' : 'dark'))
 </script>

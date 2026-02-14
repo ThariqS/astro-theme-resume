@@ -1,0 +1,169 @@
+---
+import { getCollection } from 'astro:content'
+
+interface Props {
+	slug?: string
+	href?: string
+	title?: string
+	description?: string
+}
+
+const { slug, href: externalHref, title: externalTitle, description: externalDescription } = Astro.props
+
+let title: string
+let description: string
+let href: string
+let isExternal = false
+
+if (slug) {
+	const posts = await getCollection('post')
+	const post = posts.find((p) => p.slug === slug)
+
+	if (!post) {
+		throw new Error(`PostLink: No post found with slug "${slug}"`)
+	}
+
+	title = post.data.title
+	description = post.data.description
+	href = `/blog/${slug}`
+} else if (externalHref) {
+	if (!externalTitle) {
+		throw new Error(`PostLink: External links require a title prop`)
+	}
+	title = externalTitle
+	description = externalDescription || ''
+	href = externalHref
+	isExternal = true
+} else {
+	throw new Error(`PostLink: Either slug or href prop is required`)
+}
+---
+
+<span class="post-link-wrapper relative inline">
+	<button
+		type="button"
+		class="post-link-trigger cursor-pointer border-b-2 border-dotted border-gold text-gold transition-all hover:border-solid hover:brightness-110"
+	>
+		<slot />
+	</button>
+	<span
+		class="post-link-popover pointer-events-none absolute left-1/2 top-full z-50 mt-2 w-72 -translate-x-1/2 opacity-0 transition-all duration-200"
+	>
+		<span
+			class="pointer-events-auto block rounded-lg border border-gold/20 bg-background p-4 shadow-lg"
+		>
+			<span class="flex flex-col gap-2">
+				<span class="flex items-start justify-between gap-3">
+					<span class="font-serif text-base font-medium text-foreground">{title}</span>
+					<button
+						type="button"
+						class="post-link-close shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M18 6 6 18"></path>
+							<path d="m6 6 12 12"></path>
+						</svg>
+					</button>
+				</span>
+				{description && <span class="text-sm leading-relaxed text-muted-foreground">{description}</span>}
+				<a
+					href={href}
+					target={isExternal ? '_blank' : undefined}
+					rel={isExternal ? 'noopener noreferrer' : undefined}
+					class="mt-1 inline-flex w-fit items-center gap-1.5 rounded-md border border-border/50 bg-primary-foreground px-2.5 py-1 text-xs text-muted-foreground transition-all hover:border-gold/40 hover:text-gold"
+				>
+					{isExternal ? 'View' : 'Read post'}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="10"
+						height="10"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						{isExternal ? (
+							<>
+								<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+								<polyline points="15 3 21 3 21 9"></polyline>
+								<line x1="10" y1="14" x2="21" y2="3"></line>
+							</>
+						) : (
+							<>
+								<path d="M5 12h14"></path>
+								<path d="m12 5 7 7-7 7"></path>
+							</>
+						)}
+					</svg>
+				</a>
+			</span>
+		</span>
+	</span>
+</span>
+
+<script>
+	function initPostLinks() {
+		document.querySelectorAll('.post-link-wrapper').forEach((wrapper) => {
+			const trigger = wrapper.querySelector('.post-link-trigger') as HTMLButtonElement
+			const popover = wrapper.querySelector('.post-link-popover') as HTMLElement
+			const closeBtn = wrapper.querySelector('.post-link-close') as HTMLButtonElement
+
+			if (!trigger || !popover) return
+
+			const show = () => {
+				popover.classList.remove('opacity-0', 'pointer-events-none')
+				popover.classList.add('opacity-100')
+			}
+
+			const hide = () => {
+				popover.classList.add('opacity-0', 'pointer-events-none')
+				popover.classList.remove('opacity-100')
+			}
+
+			trigger.addEventListener('click', (e) => {
+				e.stopPropagation()
+				const isVisible = popover.classList.contains('opacity-100')
+				if (isVisible) {
+					hide()
+				} else {
+					// Close any other open popovers first
+					document.querySelectorAll('.post-link-popover.opacity-100').forEach((p) => {
+						p.classList.add('opacity-0', 'pointer-events-none')
+						p.classList.remove('opacity-100')
+					})
+					show()
+				}
+			})
+
+			closeBtn?.addEventListener('click', (e) => {
+				e.stopPropagation()
+				hide()
+			})
+
+			// Close when clicking outside
+			document.addEventListener('click', (e) => {
+				if (!wrapper.contains(e.target as Node)) {
+					hide()
+				}
+			})
+		})
+	}
+
+	// Run on initial load
+	initPostLinks()
+
+	// Re-run after Astro page transitions
+	document.addEventListener('astro:after-swap', initPostLinks)
+</script>

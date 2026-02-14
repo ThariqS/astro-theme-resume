@@ -15,37 +15,51 @@ interface Props {
 
 const { post } = Astro.props
 const {
-	data: { description, ogImage, publishDate, title, updatedDate },
+	data: { description, ogImage, publishDate, title, updatedDate, tags },
 	slug
 } = post
 
 const socialImage = ogImage ?? `/og-image/${slug}.png`
 const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString()
 const { headings } = await post.render()
+
+// Check if this is a spiritual post (tags are normalized to lowercase)
+const isSpiritual = tags?.includes('spiritual') ?? false
 ---
 
 <style is:global>
 	h2,
 	h3,
 	h4 {
-		font-family: 'CabinetGrotesk', sans;
-		font-weight: 800;
+		font-family: 'Cormorant Garamond Variable', serif;
+		font-weight: 600;
+		color: hsl(var(--gold));
+	}
+
+	/* Spiritual posts use Newsreader for headings */
+	article[data-spiritual='true'] h2,
+	article[data-spiritual='true'] h3,
+	article[data-spiritual='true'] h4 {
+		font-family: 'Newsreader Variable', serif;
 	}
 </style>
 
 <PageLayout meta={{ articleDate, description, ogImage: socialImage, title }}>
 	<div
 		style={{
-			width: 'min(80ch,80vw)'
+			width: 'min(100ch,80vw)'
 		}}
 	>
-		<TableOfContents headings={headings} />
+		{!isSpiritual && <TableOfContents headings={headings} />}
 
 		<div class='mt-2 gap-x-10 md:items-end lg:flex lg:items-start'>
-			<article class='flex-grow break-words' data-pagefind-body>
-				<div id='blog-hero'><BlogHero content={post} /></div>
+			<article class='flex-grow break-words' data-pagefind-body data-spiritual={isSpiritual.toString()}>
+				<div id='blog-hero'><BlogHero content={post} hideAuthorDate={isSpiritual} /></div>
 				<div
-					class='text-black-foreground prose prose-base prose-zinc mt-6 dark:prose-invert prose-headings:font-medium prose-headings:text-foreground prose-headings:before:absolute prose-headings:before:-ms-4 prose-th:before:content-none'
+					class:list={[
+						'text-black-foreground prose prose-base prose-zinc mt-6 dark:prose-invert prose-headings:font-medium prose-headings:text-foreground prose-headings:before:absolute prose-headings:before:-ms-4 prose-th:before:content-none',
+						isSpiritual ? 'font-newsreader' : 'font-garamond'
+					]}
 					style={{
 						fontSize: '1.25rem'
 					}}
@@ -88,6 +102,27 @@ const { headings } = await post.render()
 		</button>
 	</div>
 </PageLayout>
+
+<script>
+	// Force light mode for spiritual posts
+	const article = document.querySelector('article[data-spiritual]') as HTMLElement
+	const isSpiritual = article?.dataset.spiritual === 'true'
+
+	if (isSpiritual) {
+		// Immediately set theme to light
+		document.documentElement.classList.remove('dark')
+		localStorage.setItem('theme', 'light')
+
+		// Block any theme-change events
+		document.addEventListener('theme-change', (event) => {
+			event.preventDefault()
+			event.stopImmediatePropagation()
+			// Force it back to light if someone tries to change it
+			document.documentElement.classList.remove('dark')
+			localStorage.setItem('theme', 'light')
+		}, true) // Use capture phase to intercept before other listeners
+	}
+</script>
 
 <script>
 	const scrollBtn = document.getElementById('to-top-btn') as HTMLButtonElement

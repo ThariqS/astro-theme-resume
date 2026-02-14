@@ -1,0 +1,60 @@
+---
+import { books } from '@/data/books'
+import { cn } from '@/utils'
+import CornerOrnament from './CornerOrnament.astro'
+
+interface Props {
+	class?: string
+	text: string
+	highlightedSubstring: string
+	bookId: string
+}
+
+const { class: className, text, highlightedSubstring, bookId } = Astro.props
+
+// Look up book by ID
+const book = books.find((b) => b.id === bookId)
+
+// Highlight first occurrence of substring
+const highlightIndex = text.indexOf(highlightedSubstring)
+let displayText = text
+
+if (highlightIndex !== -1) {
+	const before = text.slice(0, highlightIndex)
+	const highlighted = text.slice(highlightIndex, highlightIndex + highlightedSubstring.length)
+	const after = text.slice(highlightIndex + highlightedSubstring.length)
+	displayText = `${before}<mark class="bg-gold/20 text-foreground px-1 rounded">${highlighted}</mark>${after}`
+}
+---
+
+<blockquote
+	class={cn(
+		'group relative rounded-2xl border border-border bg-primary-foreground p-6 warm-shadow transition-all duration-300 hover:border-gold/40',
+		className
+	)}
+>
+	<CornerOrnament position="top-left" color="gold" class="opacity-60" />
+	<CornerOrnament position="bottom-right" color="bronze" class="opacity-60" />
+
+	<div class="relative z-10">
+		<div class="mb-4 font-cormorant text-lg italic leading-relaxed text-foreground/90">
+			<Fragment set:html={displayText} />
+		</div>
+
+		{
+			book ? (
+				<footer class="border-t border-border/50 pt-3 text-sm">
+					<cite class="not-italic text-muted-foreground">
+						<span class="font-medium text-foreground">{book.author}</span>
+						<span class="mx-2 text-gold/60">•</span>
+						<span class="italic">{book.title}</span>
+					</cite>
+				</footer>
+			) : (
+				<footer class="border-t border-border/50 pt-3 text-sm">
+					<cite class="not-italic text-muted-foreground">Book ID: {bookId}</cite>
+				</footer>
+			)
+		}
+	</div>
+</blockquote>

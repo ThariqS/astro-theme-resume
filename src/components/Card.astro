@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets'
 import type { ImageMetadata } from 'astro'
 import { cn } from '@/utils'
+import CornerOrnament from './CornerOrnament.astro'
 
 const {
 	as: Tag = 'div',
@@ -26,10 +27,11 @@ if (imagePath) {
 	class={cn(
 		className,
 		'relative rounded-2xl border border-border bg-primary-foreground px-5 py-3',
-		href && 'transition-all hover:border-foreground/25 hover:shadow-sm'
+		href && 'transition-all duration-300 hover:border-gold/40 hover:warm-shadow-lg'
 	)}
 	href={href}
 >
+	<CornerOrnament position='all' color='bronze' />
 	{
 		imagePath && (
 			<Image
@@ -40,11 +42,11 @@ if (imagePath) {
 			/>
 		)
 	}
-	<div class='flex flex-col gap-y-1.5'>
-		<div class='flex flex-col gap-y-0.5'>
-			<h1 class='text-lg font-medium'>{heading}</h1>
-			<h2 class='text-muted-foreground'>{subheading}</h2>
-			<h2 class='text-muted-foreground'>{date}</h2>
+	<div class='flex flex-col gap-y-2'>
+		<div class='flex flex-col gap-y-1'>
+			<h1 class='font-cormorant text-xl font-semibold text-foreground'>{heading}</h1>
+			<h2 class='text-sm text-muted-foreground'>{subheading}</h2>
+			<h2 class='text-sm text-muted-foreground'>{date}</h2>
 		</div>
 		<slot />
 	</div>

@@ -1,0 +1,132 @@
+---
+import { cn } from '@/utils'
+
+interface Props {
+	class?: string
+	title: string
+	poet: string
+	translator?: string
+	collection?: string
+}
+
+const { class: className, title, poet, translator, collection } = Astro.props
+---
+
+<figure class={cn('poem-page relative my-12 mx-auto max-w-lg', className)}>
+	<!-- The "page" with slight tilt -->
+	<div
+		class='poem-paper relative rotate-[0.5deg] rounded-[2px] border border-[#e8e4da] bg-[#fffef9] p-8 dark:border-[#3d3b35] dark:bg-[#2f2e2a] sm:p-10'
+	>
+		<!-- Page curl effect (bottom right corner) -->
+		<div class='page-curl pointer-events-none absolute bottom-0 right-0 h-12 w-12 overflow-hidden'>
+			<div
+				class='absolute bottom-0 right-0 h-[170%] w-[170%] origin-bottom-right translate-x-[30%] translate-y-[30%] rotate-45 bg-gradient-to-tl from-[#d4cfc2] via-[#ebe7dd] to-transparent dark:from-[#1a1917] dark:via-[#252420]'
+			>
+			</div>
+		</div>
+
+		<!-- Poem title -->
+		<h3
+			class='mb-6 ml-4 text-left font-cormorant text-lg italic tracking-wide text-[#5c5347] dark:text-[#c4b89e] sm:ml-6'
+		>
+			{title}
+		</h3>
+
+		<!-- Poem content -->
+		<div
+			class='poem-body ml-4 font-alegreya text-base leading-normal text-[#3d3730] dark:text-[#d8d0c0] sm:ml-6'
+		>
+			<slot />
+		</div>
+
+		<!-- Attribution -->
+		<footer class='mt-12 space-y-1 text-center'>
+			<div class='font-cormorant text-sm text-[#6b6358] dark:text-[#a89e8a]'>
+				{poet}
+			</div>
+			{
+				translator && (
+					<div class='font-sans text-xs tracking-wide text-[#8a8275] dark:text-[#7d7568]'>
+						translated by {translator}
+					</div>
+				)
+			}
+			{
+				collection && (
+					<div class='font-sans text-xs italic text-[#9d958a] dark:text-[#6d675d]'>
+						{collection}
+					</div>
+				)
+			}
+		</footer>
+	</div>
+</figure>
+
+<style>
+	.poem-paper {
+		/* Layered shadow for depth and lift */
+		box-shadow:
+			/* Soft ambient shadow */
+			0 1px 2px rgba(0, 0, 0, 0.04),
+			/* Main shadow for lift */ 0 4px 8px rgba(0, 0, 0, 0.04),
+			0 8px 16px rgba(0, 0, 0, 0.04),
+			0 16px 32px rgba(0, 0, 0, 0.06),
+			/* Edge darkening for paper feel */ inset 0 0 60px rgba(0, 0, 0, 0.01);
+	}
+
+	:global(.dark) .poem-paper {
+		box-shadow:
+			0 1px 2px rgba(0, 0, 0, 0.2),
+			0 4px 8px rgba(0, 0, 0, 0.15),
+			0 8px 16px rgba(0, 0, 0, 0.1),
+			0 16px 32px rgba(0, 0, 0, 0.15),
+			inset 0 0 60px rgba(0, 0, 0, 0.05);
+	}
+
+	.poem-body :global(strong) {
+		font-weight: 600;
+	}
+
+	.poem-body :global(em) {
+		font-style: italic;
+	}
+
+	.poem-body :global(p) {
+		margin: 0 0 1em 0;
+	}
+
+	.poem-body :global(p:last-child) {
+		margin-bottom: 0;
+	}
+
+	.poem-body :global(br) {
+		display: block;
+		content: '';
+		margin: 0;
+	}
+
+	/* Paper texture overlay */
+	.poem-paper::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		opacity: 0.03;
+		pointer-events: none;
+		border-radius: 2px;
+		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+	}
+
+	/* Subtle vignette/aged edges */
+	.poem-paper::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		border-radius: 2px;
+		box-shadow: inset 0 0 40px rgba(180, 160, 130, 0.08);
+	}
+
+	:global(.dark) .poem-paper::after {
+		box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.15);
+	}
+</style>

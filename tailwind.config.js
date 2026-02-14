@@ -54,7 +54,13 @@ const config = {
 				card: {
 					DEFAULT: 'hsl(var(--card) / <alpha-value>)',
 					foreground: 'hsl(var(--card-foreground) / <alpha-value>)'
-				}
+				},
+				// Spiritual journal colors
+				gold: 'hsl(var(--gold) / <alpha-value>)',
+				bronze: 'hsl(var(--bronze) / <alpha-value>)',
+				sage: 'hsl(var(--sage) / <alpha-value>)',
+				'dusty-rose': 'hsl(var(--dusty-rose) / <alpha-value>)',
+				'burnt-sienna': 'hsl(var(--burnt-sienna) / <alpha-value>)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -63,10 +69,12 @@ const config = {
 			},
 			fontFamily: {
 				sans: [...fontFamily.sans],
-				satoshi: ['Satoshi', 'sans'],
+				// Spiritual journal fonts
+				serif: ['EB Garamond Variable', 'serif'],
+				garamond: ['EB Garamond Variable', 'serif'],
+				cormorant: ['Cormorant Garamond Variable', 'serif'],
 				newsreader: ['Newsreader Variable', 'serif'],
-				playfair: ['Playfair Display Variable', 'serif'],
-				cabinet: ['CabinetGrotesk', 'sans']
+				alegreya: ['Alegreya Variable', 'serif']
 			}
 		}
 	}

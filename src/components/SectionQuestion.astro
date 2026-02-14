@@ -1,0 +1,16 @@
+---
+import { cn } from '@/utils'
+
+interface Props {
+	class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<p class={cn('my-6', className)}>
+	<strong class="font-semibold text-foreground">
+		<slot />
+	</strong>
+	<span class="block mt-2 w-24 h-px bg-gradient-to-r from-gold/60 via-gold/30 to-transparent"></span>
+</p>

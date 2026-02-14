@@ -28,6 +28,7 @@ const post = defineCollection({
 				})
 				.optional(),
 			draft: z.boolean().default(false),
+			pinned: z.boolean().default(false),
 			tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
 			ogImage: z.string().optional(),
 			hackerNewsId: z.string().optional()

@@ -22,3 +22,9 @@ export type SiteMeta = {
 	ogImage?: string | undefined
 	articleDate?: string | undefined
 }
+
+export type Book = {
+	id: string
+	author: string
+	title: string
+}

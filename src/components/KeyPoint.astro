@@ -1,0 +1,20 @@
+---
+import { cn } from '@/utils'
+
+interface Props {
+	class?: string
+	title: string
+	description: string
+}
+
+const { class: className, title, description } = Astro.props
+---
+
+<p class={cn('my-4', className)}>
+	<svg viewBox="0 0 12 12" class="inline-block w-2 h-2 text-gold mr-2 -translate-y-px">
+		<polygon points="6,0 12,6 6,12 0,6" fill="currentColor" />
+	</svg>
+	<strong class="font-semibold text-foreground">{title}</strong>
+	<span class="mx-1.5 text-muted-foreground">—</span>
+	{description}
+</p>

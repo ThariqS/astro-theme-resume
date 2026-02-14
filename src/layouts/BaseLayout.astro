@@ -5,17 +5,25 @@ import BaseHead from '@/components/BaseHead.astro'
 import Footer from '@/components/layout/Footer.astro'
 import Header from '@/components/layout/Header.astro'
 import ThemeProvider from '@/components/ThemeProvider.astro'
-import '@fontsource-variable/playfair-display';
+import '@fontsource-variable/eb-garamond';
+import '@fontsource-variable/eb-garamond/wght-italic.css';
+import '@fontsource-variable/cormorant-garamond';
+import '@fontsource-variable/cormorant-garamond/wght-italic.css';
 import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import '@fontsource-variable/alegreya';
+import '@fontsource-variable/alegreya/wght-italic.css';
 
 import { siteConfig } from '@/site-config'
 
 interface Props {
 	meta: SiteMeta
+	showModeToggle?: boolean
 }
 
 const {
-	meta: { articleDate, description = siteConfig.description, ogImage, title }
+	meta: { articleDate, description = siteConfig.description, ogImage, title },
+	showModeToggle = false
 } = Astro.props
 ---
 
@@ -24,12 +32,12 @@ const {
 		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
 	</head>
 
-	<body class='flex justify-center bg-background'>
+	<body class='flex justify-center bg-background scroll-smooth'>
 		<ThemeProvider />
 		<main
-			class='flex min-h-screen w-screen max-w-[75rem] flex-col items-center px-6 pb-10 pt-7 font-saoshi text-[0.92rem] leading-relaxed sm:px-10 lg:px-10'
+			class='flex min-h-screen w-screen max-w-[75rem] flex-col items-center px-6 pb-10 pt-7 font-garamond text-[0.92rem] leading-relaxed sm:px-10 lg:px-10'
 		>
-			<Header />
+			<Header showModeToggle={showModeToggle} />
 			<slot />
 			<Footer />
 		</main>

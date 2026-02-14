@@ -1,5 +1,5 @@
 ---
-title: 'Semantic sorting using LLMs and TrueSkill'
+title: 'LLM-Powered Sorting with TrueSkill'
 description: 'Sorting large amounts of data using LLMs and TrueSkill'
 publishDate: '11 Feb 2025'
 ---
@@ -138,14 +138,6 @@ The system will then break these into smaller batches, and ask the LLM to sort t
 5. "Can't find where to change my password"
 ```
 
-### When to Use This
-
-This works really well when your sorting criteria is well desribed by a prompt, and you don't have a large amount of preference or personalization data.
-
-For example, if you wanted to make a version of Netflix where a user provides a prompt their preferences, you could use this to sort the results.
-
-The flexibiltiy of a prompt allows you to cover a really wide variety of preferences and edge cases.
-
 ## When are you "done"?
 
 The number of matches needed for to converge on a result scales with dataset size and distribution of results. Luckily TrueSkill is very robust to the number of matches played, and LLMs are quite stable in their predictions.
@@ -160,6 +152,37 @@ If you want a more quantitative measure of how good your results are, TrueSkill 
 Sigma is usually initialized to 8.333, which is a good starting point, you can measure the confidence of your results by looking at how much the sigma values change.
 
 And of course course, remember the golden rule of Machine Learning **look at your data**, to make sure the results are what you expect.
+
+## Alternatives
+
+### Individual Scoring
+
+A common alternative to sorting is to score each item individually, and then sort by score.
+
+This is a good approach if you have a clear scoring function, but models struggle to score things consistently.
+
+If you score on a range of 1-10, you can expect many ties and clumps around common scores like 7.
+If you score on a range of 1-100, you should expect more randomness in the scores.
+
+But more importantly, it's easier for LLMs (and humans!) to make relative judgments ("A is more interesting than B") than absolute ones ("A is 73/100 interesting")
+
+### Embedding-based Sorting
+
+Given the cheapness of embeddings, embedding-based sorting is often deployed as well.
+
+The basic process is:
+
+1. Get embeddings for each item
+2. Choose a reference point (e.g., embedding of "very interesting")
+3. Sort items by cosine similarity to this reference point
+
+While cheap, embedding-based sorting loses a lot of the nuance of the sorting criteria and sometimes be affected by the semantic space of the embedding model (e.g. the color blue might be closer to the concept of usability than the color red)
+
+That said, embeddings can be useful in conjunction with TrueSkill:
+
+1. Use embeddings for initial rough sorting
+2. Use embedding similarity to choose batches for comparison
+3. Combine embedding and TrueSkill scores for hybrid ranking
 
 ## Optimization
 
@@ -184,4 +207,4 @@ The sigma value provides a built-in confidence measure. We can use this to:
 
 I've run into this problem a few times now, and recommended this solution to a few friends, so I hope it's useful for you as well. Let me know if it is!
 
-The code for this project is available at [GitHub link]. I'd love to hear about other applications and improvements to this technique.
+If you're running into this problem at a more complicated scale, send me an email (trq212 AT gmail DOT com) and I'll see if I can help.

@@ -10,6 +10,9 @@
       "dom.iterable"
     ],
     "paths": {
+      "@/data/*": [
+        "src/data/*"
+      ],
       "@/assets/*": [
         "src/assets/*"
       ],

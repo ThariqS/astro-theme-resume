@@ -1,0 +1,19 @@
+---
+import { cn } from '@/utils'
+
+interface Props {
+	class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<div class={cn('my-10', className)}>
+	<p class="text-2xl text-foreground/90 mb-1">
+		<span dir="rtl" lang="ar">بِسْمِ اللَّهِ</span>
+		<span class="font-cormorant text-base italic text-muted-foreground ml-3">(bismillah)</span>
+	</p>
+	<p class="font-cormorant text-sm italic text-muted-foreground tracking-wide">
+		<slot />
+	</p>
+</div>
