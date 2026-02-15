@@ -2,7 +2,7 @@
 title: 'Courage Bottlenecked'
 description: 'On how we are all bottlenecked by courage, and why being smart rarely helps.'
 publishDate: '14 Feb 2026'
-tags: ['Personal']
+tags: ['Personal', 'spiritual']
 ---
 
 One of the True things I believe is that we are all courage bottle necked.
