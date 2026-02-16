@@ -17,7 +17,7 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://example.me',
+    site: 'https://www.thariq.io',
     integrations: [
         mdx({
             components: {
