@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "astro check --watch & astro dev",
 		"start": "astro dev",
-		"build": "astro check && astro build",
+		"build": "astro check && astro build && node scripts/vercel-node-runtime.mjs",
 		"preview": "astro preview",
 		"astro": "astro",
 		"lint": "prettier --write  \"**/*.{js,jsx,ts,tsx,md,mdx,svelte,astro}\" && eslint --fix \"src/**/*.{js,ts,jsx,tsx,svelte,astro}\""
