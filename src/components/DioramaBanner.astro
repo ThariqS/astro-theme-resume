@@ -1,0 +1,105 @@
+---
+// Full-bleed homepage header: one pixel diorama per visit, picked at random, running live.
+// The scenes are static pages in public/dioramas/<slug>/ (copied from lab/ by scripts/publish-dioramas.sh).
+// Each one is a 16:9 canvas that letterboxes to fit its window, so the iframe stays 16:9 and is
+// slid around inside the banner to keep the scene's important band in view, like object-fit: cover.
+---
+
+<header class='diorama-banner' data-diorama-banner aria-hidden='true'></header>
+
+<style>
+	.diorama-banner {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+		/* ~2.8:1, at most half the screen, so the first posts show without scrolling */
+		height: clamp(300px, calc(100vw / 2.8), 50vh);
+		border-bottom: 1px solid hsl(var(--foreground));
+		background: #283049;
+	}
+	@media (max-width: 640px) {
+		.diorama-banner {
+			height: min(72vw, 46vh);
+		}
+	}
+	.diorama-banner :global(iframe) {
+		position: absolute;
+		display: block;
+		border: 0;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 1.2s ease;
+	}
+	.diorama-banner :global(iframe.on) {
+		opacity: 1;
+	}
+</style>
+
+<script>
+	// band = [x0, y0, x1, y1]: the part of the 16:9 frame (as fractions) to keep in view when the banner can hold it;
+	// (fx, fy) is where to centre when it can't. bg fills the banner while the scene loads.
+	type Scene = { slug: string; fx: number; fy: number; band: [number, number, number, number]; bg: string }
+	const SCENES: Scene[] = [
+		{ slug: 'ring-world', fx: 0.5, fy: 0.48, band: [0.3, 0.2, 0.7, 0.82], bg: '#8c977c' },
+		{ slug: 'laundromat', fx: 0.66, fy: 0.52, band: [0.42, 0.22, 0.91, 0.82], bg: '#2b3345' },
+		// beam down to the wheat; on wide screens the moon gives way so the field stays in
+		{ slug: 'wheat-lighthouse', fx: 0.72, fy: 0.46, band: [0.17, 0.24, 0.8, 0.74], bg: '#283049' }
+	]
+
+	function place(box: HTMLElement, frame: HTMLIFrameElement, sc: Scene) {
+		const W = box.clientWidth, H = box.clientHeight
+		if (!W || !H) return
+		const pad = 2 // overscan so the diorama's own letterbox can never show at the edges
+		const iw = Math.ceil(Math.max(W + 2 * pad, ((H + 2 * pad) * 16) / 9))
+		const ih = Math.ceil((iw * 9) / 16)
+		const offset = (view: number, total: number, focus: number, lo: number, hi: number) => {
+			const v = view / total
+			let t = focus - v / 2
+			if (hi - lo <= v) t = Math.max(Math.min(t, lo), hi - v)
+			t = Math.min(Math.max(t, 0), 1 - v)
+			return -Math.round(t * total) - pad
+		}
+		const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))
+		const [x0, y0, x1, y1] = sc.band
+		frame.style.width = iw + 'px'
+		frame.style.height = ih + 'px'
+		frame.style.left = clamp(offset(W + 2 * pad, iw, sc.fx, x0, x1), W + pad - iw, -pad) + 'px'
+		frame.style.top = clamp(offset(H + 2 * pad, ih, sc.fy, y0, y1), H + pad - ih, -pad) + 'px'
+	}
+
+	const box = document.querySelector<HTMLElement>('[data-diorama-banner]')
+	if (box) {
+		const asked = new URLSearchParams(location.search).get('scene') // ?scene=<slug> pins one, for checking crops
+		const sc = SCENES.find((s) => s.slug === asked) ?? SCENES[Math.floor(Math.random() * SCENES.length)]
+		box.style.backgroundColor = sc.bg
+		const frame = document.createElement('iframe')
+		frame.title = ''
+		frame.tabIndex = -1
+		frame.setAttribute('scrolling', 'no')
+		place(box, frame, sc)
+		frame.src = `/dioramas/${sc.slug}/index.html` // explicit: astro dev doesn't resolve folder URLs in public/
+		box.appendChild(frame)
+
+		// Fade in once the scene has drawn its first frame, so the banner never flashes the page's dark background.
+		frame.addEventListener('load', () => {
+			const w = frame.contentWindow as (Window & { DIORAMA?: { ready: Promise<unknown> } }) | null
+			const t0 = performance.now()
+			const wait = () => {
+				if (w?.DIORAMA) w.DIORAMA.ready.then(() => w.requestAnimationFrame(() => w.requestAnimationFrame(() => frame.classList.add('on'))))
+				else if (performance.now() - t0 < 4000) setTimeout(wait, 40)
+				else frame.classList.add('on')
+			}
+			wait()
+		})
+
+		new ResizeObserver(() => place(box, frame, sc)).observe(box)
+		// Stop drawing while the banner is scrolled away (and tell the scene again once it has loaded).
+		let visible = true
+		const tell = () => frame.contentWindow?.postMessage({ diorama: visible ? 'wake' : 'sleep' }, location.origin)
+		frame.addEventListener('load', tell)
+		new IntersectionObserver(([e]) => {
+			visible = e.isIntersecting
+			tell()
+		}).observe(box)
+	}
+</script>

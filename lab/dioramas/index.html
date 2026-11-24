@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Site dioramas</title>
+<style>
+  :root { --bg:#14161a; --fg:#e8e6df; --mute:#8a8f98; --card:#1c1f25; --line:#2a2e36; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.4 Menlo, ui-monospace, monospace; padding:20px 16px 40px; }
+  header { display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; max-width:1500px; margin:0 auto 18px; }
+  h1 { font:400 22px/1 Didot, "Bodoni 72", serif; letter-spacing:.02em; margin:0; }
+  h2 { font:400 16px/1 Didot, "Bodoni 72", serif; color:var(--mute); max-width:1500px; margin:34px auto 12px; }
+  header span { color:var(--mute); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 680px), 1fr)); gap:16px; max-width:1500px; margin:0 auto; }
+  #earlier { grid-template-columns:repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .frame { aspect-ratio:16/9; background:#0d0e10; position:relative; }
+  .frame.tall { aspect-ratio:4/5; }
+  .frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .meta { display:flex; justify-content:space-between; gap:8px; padding:9px 12px; border-top:1px solid var(--line); }
+  .meta a { color:var(--fg); text-decoration:none; } .meta a:hover { text-decoration:underline; }
+  .meta small { color:var(--mute); }
+</style></head>
+<body>
+<header><h1>site dioramas</h1><span>pixel loops, no one in them · click a piece, then space pauses and arrows scrub</span></header>
+<div class="grid" id="scenes"></div>
+<h2>earlier, with a figure</h2>
+<div class="grid" id="earlier"></div>
+<script>
+const scenes = [
+  ['dunes-to-stars', 'twilight · the sand lifts off and becomes the stars'],
+  ['moon-pour', 'evening · the moon cracks and pours into the sea'],
+  ['ring-world', 'inside the hollow world, a small sun in the middle'],
+  ['laundromat', '2am, rain · one washer is turning a galaxy'],
+  ['wheat-lighthouse', 'night · a lighthouse in a wheat field'],
+];
+const earlier = [['tower-follow', 'following him up the endless stair'], ['endless-tower', 'the stair that never ends'], ['cracked-moon', 'the cracked moon, from the pier']];
+const card = ([slug, note], tall) => `<div class="card"><div class="frame${tall ? ' tall' : ''}"><iframe src="${slug}/" loading="lazy"></iframe></div>
+  <div class="meta"><a href="${slug}/" target="_blank">${slug}</a><small>${note}</small></div></div>`;
+document.getElementById('scenes').innerHTML = scenes.map((s) => card(s, false)).join('');
+document.getElementById('earlier').innerHTML = earlier.map((s) => card(s, true)).join('');
+</script>
+</body></html>

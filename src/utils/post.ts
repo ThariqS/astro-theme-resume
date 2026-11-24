@@ -8,6 +8,15 @@ export async function getAllPosts() {
 	})
 }
 
+/**
+ * Only personal posts are listed (home, blog, tags, RSS). Every other post is still built and
+ * reachable at its URL; it just isn't linked from anywhere.
+ */
+export function isListed(post: CollectionEntry<'post'>) {
+	const { tags } = post.data
+	return !tags.includes('hidden') && (tags.includes('personal') || tags.includes('spiritual'))
+}
+
 export function sortMDByDate(posts: Array<CollectionEntry<'post'>>) {
 	return posts.sort((a, b) => {
 		const aDate = new Date(a.data.updatedDate ?? a.data.publishDate).valueOf()

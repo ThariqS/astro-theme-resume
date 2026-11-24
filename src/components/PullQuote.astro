@@ -1,0 +1,19 @@
+---
+import { cn } from '@/utils'
+
+interface Props {
+	class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<figure class={cn('relative my-14 not-prose', className)}>
+	<div class='mx-auto max-w-sm border-y border-gold/20 py-8'>
+		<blockquote
+			class='text-center font-cormorant text-xl italic leading-relaxed text-foreground/90 sm:text-2xl'
+		>
+			<slot />
+		</blockquote>
+	</div>
+</figure>

@@ -5,40 +5,64 @@ import ProjectCard from '../components/ProjectCard.astro'
 import PostPreview from '@/components/blog/PostPreview.astro'
 import GeometricDivider from '@/components/GeometricDivider.astro'
 import FlippableProfile from '@/components/FlippableProfile.astro'
+import DioramaBanner from '@/components/DioramaBanner.astro'
 
-import { getAllPosts, sortMDByDate } from '@/utils'
+import { getAllPosts, isListed, sortMDByDate } from '@/utils'
+
+// The site is personal-only for now. The professional blocks below are kept, just not rendered;
+// flip this to bring them back. (Professional posts are still built at their URLs, only unlisted.)
+const SHOW_PROFESSIONAL = false
 
 const MAX_POSTS = 10
 const allPosts = await getAllPosts()
 const sortedPosts = sortMDByDate(allPosts)
 // Put pinned posts first, then sort by date
-const allPostsByDate = [
-	...sortedPosts.filter((p) => p.data.pinned),
-	...sortedPosts.filter((p) => !p.data.pinned)
-].slice(0, MAX_POSTS)
+const pinnedFirst = [...sortedPosts.filter((p) => p.data.pinned), ...sortedPosts.filter((p) => !p.data.pinned)]
+const allPostsByDate = pinnedFirst.slice(0, MAX_POSTS)
+const listedPosts = pinnedFirst.filter(isListed).slice(0, MAX_POSTS)
 ---
 
-<PageLayout meta={{ title: 'Home' }} showModeToggle={true}>
+<PageLayout meta={{ title: 'Home' }} showHeader={false}>
+	<DioramaBanner slot='banner' />
 	<div class='flex w-full flex-col gap-y-10'>
+		<section class='mt-4 flex items-start justify-between gap-6'>
+			<div>
+				<h1 class='font-cormorant text-5xl font-semibold leading-none tracking-wide text-foreground sm:text-6xl'>
+					Thariq
+				</h1>
+				<p class='mt-3 font-garamond text-xl italic text-muted-foreground'>Trying to pay attention.</p>
+			</div>
+			<nav class='flex gap-x-6 pt-2 font-garamond text-lg' aria-label='Site'>
+				<a class='illuminated-link' href='/blog/'>Writing</a>
+				<a class='illuminated-link' href='/rss.xml'>RSS</a>
+			</nav>
+		</section>
+
+		{
+			listedPosts.length > 0 && (
+				<>
+					<GeometricDivider variant='simple' />
+					<Section title='Posts'>
+						<ul class='flex flex-col gap-y-4'>
+							{listedPosts.map((p) => (
+								<PostPreview post={p} />
+							))}
+						</ul>
+					</Section>
+				</>
+			)
+		}
+
+		{SHOW_PROFESSIONAL && (
+		<>
 		<section class='flex flex-col items-center gap-y-4'>
 			<FlippableProfile size='lg' />
-
-			<h1
-				class='font-cormorant text-5xl font-semibold tracking-wide text-foreground'
-				data-mode='professional'
-			>
+			<h1 class='font-cormorant text-5xl font-semibold tracking-wide text-foreground'>
 				Thariq Shihipar
-			</h1>
-
-			<h1
-				class='font-cormorant text-5xl font-semibold tracking-wide text-foreground'
-				data-mode='personal'
-			>
-				Thariq
 			</h1>
 		</section>
 
-		<Section title='About' data-mode='professional'>
+		<Section title='About'>
 			<div class='flex flex-col gap-y-5 font-garamond text-xl leading-loose'>
 				<p>Engineer & serial entrepreneur. Currently working on Claude Code at Anthropic.</p>
 				<p>
@@ -56,45 +80,21 @@ const allPostsByDate = [
 			</div>
 		</Section>
 
-		<Section title='About' data-mode='personal'>
-			<div class='flex flex-col gap-y-5 font-garamond text-xl leading-loose'>
-				<p>Trying to pay attention.</p>
-			</div>
+		<GeometricDivider variant='simple' />
+
+		<Section title='Posts'>
+			<ul class='flex flex-col gap-y-4'>
+				{allPostsByDate
+					.filter((p) => !p.data.tags.includes('hidden') && !p.data.tags.includes('spiritual'))
+					.map((p) => (
+						<PostPreview post={p} />
+					))}
+			</ul>
 		</Section>
 
-		{
-			allPostsByDate.length > 0 && (
-				<>
-					<GeometricDivider variant='simple' />
+		<GeometricDivider variant='mandala' />
 
-					<!-- Professional mode posts (exclude spiritual) -->
-					<Section title='Posts' data-mode='professional'>
-						<ul class='flex flex-col gap-y-4'>
-							{allPostsByDate
-								.filter((p) => !p.data.tags.includes('hidden') && !p.data.tags.includes('spiritual'))
-								.map((p) => (
-									<PostPreview post={p} />
-								))}
-						</ul>
-					</Section>
-
-					<!-- Personal mode posts (only spiritual) -->
-					<Section title='Posts' data-mode='personal'>
-						<ul class='flex flex-col gap-y-4'>
-							{allPostsByDate
-								.filter((p) => !p.data.tags.includes('hidden') && p.data.tags.includes('spiritual'))
-								.map((p) => (
-									<PostPreview post={p} />
-								))}
-						</ul>
-					</Section>
-				</>
-			)
-		}
-
-		<GeometricDivider variant='mandala' data-mode='professional' />
-
-		<Section title="Stuff I've Made" data-mode='professional'>
+		<Section title="Stuff I've Made">
 			<div class='grid grid-cols-3 gap-4'>
 				{
 					/* 
@@ -202,67 +202,7 @@ const allPostsByDate = [
 				/>
 			</div>
 		</Section>
+		</>
+		)}
 	</div>
 </PageLayout>
-
-<script>
-	// Get current site mode from URL parameter
-	function getSiteMode(): 'professional' | 'personal' {
-		if (typeof window !== 'undefined') {
-			const params = new URLSearchParams(window.location.search)
-			const mode = params.get('mode')
-			if (mode === 'personal' || mode === 'professional') {
-				return mode
-			}
-		}
-		return 'personal'
-	}
-
-	// Filter all content based on site mode
-	function filterContent() {
-		const mode = getSiteMode()
-
-		// Filter sections with data-mode attribute (but not toggle buttons)
-		const modedSections = document.querySelectorAll(
-			'section[data-mode], div[data-mode], h1[data-mode]'
-		)
-		modedSections.forEach((section) => {
-			const sectionMode = (section as HTMLElement).dataset.mode
-			if (sectionMode === mode) {
-				;(section as HTMLElement).style.removeProperty('display')
-			} else {
-				;(section as HTMLElement).style.display = 'none'
-			}
-		})
-	}
-
-	// Handle browser back/forward navigation
-	function handlePopState() {
-		filterContent()
-	}
-
-	// Initialize on page load
-	document.addEventListener('DOMContentLoaded', () => {
-		filterContent()
-		// Listen for browser back/forward
-		window.addEventListener('popstate', handlePopState)
-	})
-
-	// Listen for mode changes
-	document.addEventListener('mode-change', () => {
-		filterContent()
-	})
-
-	// Handle Astro view transitions
-	document.addEventListener('astro:page-load', () => {
-		filterContent()
-	})
-
-	// Run immediately on script load
-	if (document.readyState === 'loading') {
-		// Still loading, wait for DOMContentLoaded (already set up above)
-	} else {
-		// Already loaded, run immediately
-		filterContent()
-	}
-</script>

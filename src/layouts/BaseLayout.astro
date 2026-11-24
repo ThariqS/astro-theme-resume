@@ -19,11 +19,13 @@ import { siteConfig } from '@/site-config'
 interface Props {
 	meta: SiteMeta
 	showModeToggle?: boolean
+	showHeader?: boolean
 }
 
 const {
 	meta: { articleDate, description = siteConfig.description, ogImage, title },
-	showModeToggle = false
+	showModeToggle = false,
+	showHeader = true
 } = Astro.props
 ---
 
@@ -32,12 +34,14 @@ const {
 		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
 	</head>
 
-	<body class='flex justify-center bg-background scroll-smooth'>
+	<body class='flex flex-col items-center bg-background scroll-smooth'>
 		<ThemeProvider />
+		<!-- full-bleed content above the page column, e.g. the homepage banner -->
+		<slot name='banner' />
 		<main
 			class='flex min-h-screen w-screen max-w-[75rem] flex-col items-center px-6 pb-10 pt-7 font-garamond text-[0.92rem] leading-relaxed sm:px-10 lg:px-10'
 		>
-			<Header showModeToggle={showModeToggle} />
+			{showHeader && <Header showModeToggle={showModeToggle} />}
 			<slot />
 			<Footer />
 		</main>

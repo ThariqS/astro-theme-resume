@@ -1,0 +1,108 @@
+---
+import { cn } from '@/utils'
+
+interface Props {
+	class?: string
+}
+
+const { class: className } = Astro.props
+
+const densePositions = Array.from({ length: 14 }, (_, i) => ({
+	x: 4 + (i * 92) / 14 + Math.sin(i * 2.3) * 1.5,
+	delay: i * 0.12,
+	size: 3 + ((i * 7) % 3),
+}))
+
+const sparsePositions = [
+	{ x: 28, delay: 0, size: 6 },
+	{ x: 76, delay: 1.8, size: 7 },
+]
+---
+
+<figure class={cn('reward-timeline my-10 mx-auto max-w-md not-prose', className)}>
+	<div class='space-y-5'>
+		<!-- Dense Rewards -->
+		<div class='flex items-center gap-4'>
+			<span
+				class='w-16 shrink-0 text-right font-cormorant text-xs uppercase tracking-wider text-[#8a8275] dark:text-[#7d7568] sm:w-20'
+				>Dense</span
+			>
+			<div
+				class='relative h-10 flex-1 overflow-hidden rounded-lg border border-[#e8e4da]/60 bg-[#f8f4ec]/80 dark:border-[#3d3b35]/60 dark:bg-[#2a2924]/80'
+			>
+				<div
+					class='absolute left-3 right-3 top-1/2 h-px -translate-y-1/2 bg-[#d4cfc2]/80 dark:bg-[#4a4840]/80'
+				>
+				</div>
+				{
+					densePositions.map((dot) => (
+						<div
+							class='dense-pulse absolute top-1/2 rounded-full'
+							style={`left: ${dot.x}%; width: ${dot.size}px; height: ${dot.size}px; animation-delay: ${dot.delay}s; background: hsl(var(--gold)); transform: translate(-50%, -50%);`}
+						/>
+					))
+				}
+			</div>
+		</div>
+
+		<!-- Sparse Rewards -->
+		<div class='flex items-center gap-4'>
+			<span
+				class='w-16 shrink-0 text-right font-cormorant text-xs uppercase tracking-wider text-[#8a8275] dark:text-[#7d7568] sm:w-20'
+				>Sparse</span
+			>
+			<div
+				class='relative h-10 flex-1 overflow-hidden rounded-lg border border-[#e8e4da]/60 bg-[#f8f4ec]/80 dark:border-[#3d3b35]/60 dark:bg-[#2a2924]/80'
+			>
+				<div
+					class='absolute left-3 right-3 top-1/2 h-px -translate-y-1/2 bg-[#d4cfc2]/80 dark:bg-[#4a4840]/80'
+				>
+				</div>
+				{
+					sparsePositions.map((dot) => (
+						<div
+							class='sparse-pulse absolute top-1/2 rounded-full'
+							style={`left: ${dot.x}%; width: ${dot.size}px; height: ${dot.size}px; animation-delay: ${dot.delay}s; background: hsl(var(--gold)); transform: translate(-50%, -50%);`}
+						/>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</figure>
+
+<style>
+	.dense-pulse {
+		animation: dense-fade 2.5s ease-in-out infinite;
+		opacity: 0.5;
+	}
+
+	.sparse-pulse {
+		animation: sparse-glow 3.5s ease-in-out infinite;
+		opacity: 0.7;
+	}
+
+	@keyframes dense-fade {
+		0%,
+		100% {
+			opacity: 0.35;
+		}
+		50% {
+			opacity: 0.7;
+		}
+	}
+
+	@keyframes sparse-glow {
+		0%,
+		100% {
+			opacity: 0.5;
+			box-shadow: 0 0 4px hsl(var(--gold) / 0.2);
+		}
+		50% {
+			opacity: 1;
+			box-shadow:
+				0 0 12px hsl(var(--gold) / 0.5),
+				0 0 24px hsl(var(--gold) / 0.2);
+		}
+	}
+</style>

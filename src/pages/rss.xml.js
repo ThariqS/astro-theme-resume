@@ -1,9 +1,9 @@
 import rss from '@astrojs/rss'
 import { siteConfig } from '@/site-config'
-import { getAllPosts } from '@/utils'
+import { getAllPosts, isListed } from '@/utils'
 
 export const GET = async () => {
-	const posts = await getAllPosts()
+	const posts = (await getAllPosts()).filter(isListed)
 
 	return rss({
 		title: siteConfig.title,
